@@ -99,6 +99,20 @@ bool RectangleCircleIntersection(const BoundingRectangle& rect, const Circle& ci
 	return point.DistanceSquared(circle.center) <= circle.radius * circle.radius;
 }
 
+// Check whether two oriented bounding boxes intersect.
+// Params:
+//  rect1 = The first oriented bounding box.
+//	rect2 = The second oriented bounding box.
+// Returns:
+//   True if intersection, false otherwise.
+bool OrientedBoundingBoxIntersection(const ColliderRectangle& rect1, const ColliderRectangle& rect2)
+{
+
+
+	// Stub
+	return false;
+}
+
 // Check whether a moving point and line intersect.
 // Params:
 //  staticLine   = Start and end of first line segment.

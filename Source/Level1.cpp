@@ -75,7 +75,7 @@ namespace Levels
 
 		// Rectangles.
 		GameObject* rectangle = objectFactory.CreateObject("Rectangle", resourceManager.GetMesh("Quad"));
-		rectangle->GetComponent<Transform>()->SetTranslation(Vector2D(-200.0f, 200.0f));
+		rectangle->GetComponent<Transform>()->SetTranslation(Vector2D(-200.0f, 225.0f));
 		rectangle->GetComponent<Physics>()->SetVelocity(Vector2D(50.0f, -75.0f));
 		objectManager.AddObject(*rectangle);
 

@@ -73,8 +73,8 @@ bool RectangleCircleIntersection(const BoundingRectangle& rect, const Circle& ci
 
 // Check whether two oriented bounding boxes intersect.
 // Params:
-//  rect1 = The first rectangle.
-//	rect2 = The second rectangle.
+//  rect1 = The first oriented bounding box.
+//	rect2 = The second oriented bounding box.
 // Returns:
 //   True if intersection, false otherwise.
 bool OrientedBoundingBoxIntersection(const ColliderRectangle& rect1, const ColliderRectangle& rect2);

@@ -122,8 +122,54 @@ bool ColliderRectangle::IsCollidingWith(const Collider& other) const
 		// Interpret the other collider as a rectangle collider for ease of access.
 		const ColliderRectangle& otherRectangle = static_cast<const ColliderRectangle&>(other);
 
-		// Check if the other rectangle is intersecting the rectangle.
-		return RectangleRectangleIntersection(rectangle, BoundingRectangle(otherTranslation, otherRectangle.GetExtents()));
+		// Normalize the angles to within -PI/2, +PI/2
+
+		float angle1 = transform->GetRotation();
+		while (angle1 < -static_cast<float>(M_PI) / 2.0f)
+			angle1 += static_cast<float>(M_PI);
+		while (angle1 > static_cast<float>(M_PI) / 2.0f)
+			angle1 -= static_cast<float>(M_PI);
+
+		float angle2 = other.transform->GetRotation();
+		while (angle2 < -static_cast<float>(M_PI) / 2.0f)
+			angle2 += static_cast<float>(M_PI);
+		while (angle2 > static_cast<float>(M_PI) / 2.0f)
+			angle2 -= static_cast<float>(M_PI);
+
+		if (AlmostEqual(angle1, static_cast<float>(M_PI) / 2.0f) || AlmostEqual(angle1, -static_cast<float>(M_PI) / 2.0f))
+		{
+			std::swap(rectangle.extents.x, rectangle.extents.y);
+			rectangle.left = rectangle.center.x - rectangle.extents.x;
+			rectangle.top = rectangle.center.y + rectangle.extents.y;
+			rectangle.right = rectangle.center.x + rectangle.extents.x;
+			rectangle.bottom = rectangle.center.y - rectangle.extents.y;
+
+			angle1 = 0.0f;
+		}
+
+		BoundingRectangle otherBoundingRectangle(otherTranslation, otherRectangle.GetExtents());
+
+		if (AlmostEqual(angle2, static_cast<float>(M_PI) / 2.0f) || AlmostEqual(angle2, -static_cast<float>(M_PI) / 2.0f))
+		{
+			std::swap(otherBoundingRectangle.extents.x, otherBoundingRectangle.extents.y);
+			otherBoundingRectangle.left = otherBoundingRectangle.center.x - otherBoundingRectangle.extents.x;
+			otherBoundingRectangle.top = otherBoundingRectangle.center.y + otherBoundingRectangle.extents.y;
+			otherBoundingRectangle.right = otherBoundingRectangle.center.x + otherBoundingRectangle.extents.x;
+			otherBoundingRectangle.bottom = otherBoundingRectangle.center.y - otherBoundingRectangle.extents.y;
+
+			angle2 = 0.0f;
+		}
+
+		if (AlmostEqual(angle1, 0.0f) && AlmostEqual(angle2, 0.0f))
+		{
+			// Check if the other rectangle is intersecting the rectangle.
+			return RectangleRectangleIntersection(rectangle, otherBoundingRectangle);
+		}
+		else
+		{
+			// Check if the other oriented bounding box is intersecting the oriented bounding box.
+			return OrientedBoundingBoxIntersection(*this, otherRectangle);
+		}
 	}
 	}
 
