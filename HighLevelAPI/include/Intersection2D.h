@@ -25,6 +25,7 @@
 
 class Transform;
 class Physics;
+class ColliderRectangle;
 
 //------------------------------------------------------------------------------
 // Public Function Declarations:
@@ -69,6 +70,14 @@ bool RectangleRectangleIntersection(const BoundingRectangle& rect1, const Boundi
 // Returns:
 //   True if intersection, false otherwise.
 bool RectangleCircleIntersection(const BoundingRectangle& rect, const Circle& circle);
+
+// Check whether two oriented bounding boxes intersect.
+// Params:
+//  rect1 = The first rectangle.
+//	rect2 = The second rectangle.
+// Returns:
+//   True if intersection, false otherwise.
+bool OrientedBoundingBoxIntersection(const ColliderRectangle& rect1, const ColliderRectangle& rect2);
 
 // Check whether a moving point and line intersect.
 // Params:
