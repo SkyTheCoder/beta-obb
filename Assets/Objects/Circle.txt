@@ -1,0 +1,35 @@
+Circle
+{
+  numComponents : 6
+  Transform
+  {
+    translation : { 0, 0 }
+    rotation : 0
+    scale : { 100, 100 }
+  }
+  Sprite
+  {
+    frameIndex : 0
+    color : { 1 , 1 , 1 , 1 }
+  }
+  Physics
+  {
+    acceleration : { 0, 0 }
+    velocity : { 0, 0 }
+    angularVelocity : 0
+    mass : 1
+  }
+  ColliderCircle
+  {
+    radius : 50
+  }
+  Behaviors::ColorChange
+  {
+    normalColor : { 1 , 1 , 0 , 1 }
+    collidedColor : { 1 , 0 , 0 , 1 }
+    collidedColorTime : 0.1
+  }
+  Behaviors::ScreenWrap
+  {
+  }
+}

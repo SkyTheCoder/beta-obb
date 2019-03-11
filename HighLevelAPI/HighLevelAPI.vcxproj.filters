@@ -1,0 +1,202 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="GameObject">
+      <UniqueIdentifier>{d1453b96-6b68-46cb-87fd-34bc3484b7b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics">
+      <UniqueIdentifier>{b81d6c09-be39-4de5-a62c-80aaf916722f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Physics">
+      <UniqueIdentifier>{3cffbd57-e4c7-4b82-abed-06802b5a7633}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Serialization">
+      <UniqueIdentifier>{c3e85edc-6afe-4bbb-a22d-ba00420dd170}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{427acc92-76e1-4eee-ac97-2fd70b4110d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio">
+      <UniqueIdentifier>{1ef7107d-9708-48e5-9e9d-f7236b401b93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Precompiled">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Levels">
+      <UniqueIdentifier>{745f59e8-3e25-481a-b422-285e34eaaaf3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Collisions">
+      <UniqueIdentifier>{8f3cf868-084f-48c9-b607-8718adfe2330}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Systems">
+      <UniqueIdentifier>{1e6d4b8f-bafb-4466-a9e4-e0100d43f2cc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Animation.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Sprite.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SpriteSource.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SpriteTilemap.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MeshHelper.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ColliderTilemap.h">
+      <Filter>Collisions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Collider.h">
+      <Filter>Collisions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ColliderCircle.h">
+      <Filter>Collisions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ColliderPoint.h">
+      <Filter>Collisions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ColliderRectangle.h">
+      <Filter>Collisions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Component.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameObject.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Transform.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Physics.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\stdafx.h">
+      <Filter>Precompiled</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Space.h">
+      <Filter>Levels</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Serializable.h">
+      <Filter>Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Parser.h">
+      <Filter>Serialization</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Tilemap.h">
+      <Filter>Levels</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Level.h">
+      <Filter>Levels</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Intersection2D.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Matrix2DStudent.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SoundManager.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameObjectFactory.h">
+      <Filter>GameObject\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GameObjectManager.h">
+      <Filter>GameObject\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ResourceManager.h">
+      <Filter>GameObject\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ColliderLine.h">
+      <Filter>Collisions</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\stdafx.cpp">
+      <Filter>Precompiled</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Collider.cpp">
+      <Filter>Collisions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ColliderCircle.cpp">
+      <Filter>Collisions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ColliderPoint.cpp">
+      <Filter>Collisions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ColliderRectangle.cpp">
+      <Filter>Collisions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ColliderTilemap.cpp">
+      <Filter>Collisions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Component.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Animation.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameObject.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Level.cpp">
+      <Filter>Levels</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MeshHelper.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Space.cpp">
+      <Filter>Levels</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SpriteSource.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sprite.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SpriteTilemap.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Transform.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Tilemap.cpp">
+      <Filter>Levels</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Physics.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Matrix2DStudent.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Intersection2D.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SoundManager.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameObjectManager.cpp">
+      <Filter>GameObject\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Serializable.cpp">
+      <Filter>Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Parser.cpp">
+      <Filter>Serialization</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameObjectFactory.cpp">
+      <Filter>GameObject\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ResourceManager.cpp">
+      <Filter>GameObject\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ColliderLine.cpp">
+      <Filter>Collisions</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
