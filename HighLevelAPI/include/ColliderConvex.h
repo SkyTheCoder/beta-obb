@@ -17,10 +17,9 @@
 #include <vector>					// Vector
 
 //------------------------------------------------------------------------------
-// Forward Declarations:
+// Forward Declarations
 //------------------------------------------------------------------------------
-
-class Vector2D;
+struct LineSegment;
 
 //------------------------------------------------------------------------------
 // Public Structures
@@ -29,19 +28,32 @@ class Vector2D;
 class ColliderConvex : public Collider
 {
 private:
+	//------------------------------------------------------------------------------
+	// Private Variables
+	//------------------------------------------------------------------------------
+
 	// The local points of the collider
-	std::vector<Vector2D> localPoints;
+	std::vector<LineSegment> localPoints;
 public:
+	//------------------------------------------------------------------------------
+	// Public Functions
+	//------------------------------------------------------------------------------
+
 	// Constructs a convex polygon colllider
 	// Params:
 	//	localPoints: The points of the convex polygon in relation to the center of it
-	ColliderConvex(std::vector<Vector2D> localPoints);
+	ColliderConvex(const std::vector<LineSegment>& localPoints);
 	
 	// Constructs a convex polygon collider
 	// Params:
 	//	localPoints: The points of the convex polygon in relation to its center
 	//	size: The number of points we are putting in
-	ColliderConvex(Vector2D* localPoints, size_t size);
+	ColliderConvex(const LineSegment* localPoints, size_t size);
+
+	// Clones this component
+	// Returns:
+	//	A clone of this component
+	Component* Clone() const;
 
 	// Serializes the component to a file
 	// Params:
@@ -63,4 +75,14 @@ public:
 	//	Whether the two colliders are colliding with each other
 	bool IsCollidingWith(const Collider& with) const override;
 
-}
+	// Gets the line segments of the convex collider in local space
+	// Returns:
+	//	A list with the line segments of the line collider
+	const std::vector<LineSegment>& GetLocalLineSegments() const;
+
+	// Gets the line segments transformed to world space
+	// Returns:
+	//	A list with the line segments transformed to world space
+	std::vector<LineSegment> GetLineSegments() const;
+
+};

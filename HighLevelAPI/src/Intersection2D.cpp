@@ -13,13 +13,14 @@
 // Include Files:
 //------------------------------------------------------------------------------
 
-#include "stdafx.h"
+#include <stdafx.h>
 
-#include "Intersection2D.h"
+#include <Intersection2D.h>
 
 // Components
-#include "Transform.h"
-#include "Physics.h"
+#include <Transform.h>
+#include <Physics.h>
+#include <ColliderConvex.cpp>
 
 //------------------------------------------------------------------------------
 
@@ -97,6 +98,121 @@ bool RectangleCircleIntersection(const BoundingRectangle& rect, const Circle& ci
 
 	// Check if the point is close enough to be intersecting the circle.
 	return point.DistanceSquared(circle.center) <= circle.radius * circle.radius;
+}
+
+// Check whether two oriented bounding boxes intersect.
+// Params:
+//  rect1 = The first rectangle.
+//	rect2 = The second rectangle.
+// Returns:
+//   True if intersection, false otherwise.
+bool OrientedBoundingBoxIntersection(const ColliderRectangle& rect1, const ColliderRectangle& rect2)
+{
+	UNREFERENCED_PARAMETER(rect1);
+	UNREFERENCED_PARAMETER(rect2);
+	return false;
+}
+
+// Projects a polygon into a normal
+// Params:
+//	normal: The normal we are using to project the polygon
+//	vertices: The vertices we are projecting into the normal
+//	min: The minimum value of the polygon as a result of projecting it into the normal
+//	max: The maximum value of the polygon as a result of projection it into the normal
+void ProjectPolygon(const Vector2D& normal, const std::vector<Vector2D>& vertices, float& minValue, float& maxValue)
+{
+	// Get the minimum and maximum projetions of the first polygon in the line
+	float minValue = -std::numeric_limits<float>::lowest();
+	float maxValue = std::numeric_limits<float>::lowest();
+	// Project the vertex into the normal and save the edges of the first projecte polygon into the line
+	// minimum and maximum
+	for (auto vertex = vertices.cbegin(); vertex < vertices.cend(); ++vertex)
+	{
+		float projection = vertex->DotProduct(normal);
+		minValue = min(minValue, projection);
+		maxValue = max(maxValue, projection);
+	}
+}
+
+// Check whether two convex polygons interact
+// Params:
+//	polygon1: The first convex polygon
+//	polygon2: The second convex polygon
+// Returns:
+//	True if intersection, false otherwise
+bool ConvexHullIntersection(const ColliderConvex& polygon1, const ColliderConvex& polygon2)
+{
+	// 1.) Get the list of line segments from each polygon
+	const std::vector<LineSegment> lineSegments1 = polygon1.GetLineSegments();
+	const std::vector<LineSegment> lineSegments2 = polygon2.GetLineSegments();
+
+	// Get the minimum and maximum projetions of the first polygon in the line
+	float set1Min;
+	float set1Max;
+	// Get the minimum and maximum projections of the second polygon in the line
+	float set2Min;
+	float set2Max;
+
+	// 2.) Save the vertices of both line segments
+	std::vector<Vector2D> vertexSet1;
+	std::vector<Vector2D> vertexSet2;
+	// Save the first set of vertices
+	vertexSet1.reserve(lineSegments1.size());
+	vertexSet1.push_back(lineSegments1.begin()->start);
+	for (auto begin = lineSegments1.cbegin(); begin < lineSegments1.cend(); ++begin)
+	{
+		vertexSet1.push_back(begin->end);
+	}
+	// Save the second set of vertices
+	vertexSet2.reserve(lineSegments2.size());
+	vertexSet2.push_back(lineSegments2.begin()->start);
+	for (auto begin = lineSegments2.cbegin(); begin < lineSegments2.cend(); ++begin)
+	{
+		vertexSet2.push_back(begin->end);
+	}
+
+	// 3.) Start projecting the vertices of both polygons of into one set of axes
+	for (auto begin = lineSegments1.cbegin(); begin < lineSegments1.cend(); ++begin)
+	{
+		// The normal from the current line segment
+		Vector2D normal = begin->normal;
+		ProjectPolygon(normal, vertexSet1, set1Min, set1Max);
+		ProjectPolygon(normal, vertexSet2, set2Min, set2Max);
+		//If there is a gap in the projection of the vertices on the axis, then stop using this set of axes as we
+		// found that there is no collision; return false
+		if (set1Max < set2Min || set2Max > set1Min)
+		{
+			return false;
+		}
+	}
+
+	// 4.) Start projection the vertices of both polygons into the other set of axes
+	for (auto begin = lineSegments2.cbegin(); begin < lineSegments2.cend(); ++begin)
+	{
+		// The normal from the current line segment
+		Vector2D normal = begin->normal;
+		ProjectPolygon(normal, vertexSet1, set1Min, set1Max);
+		ProjectPolygon(normal, vertexSet2, set2Min, set2Max);
+		//If there is a gap in the projection of the vertices on the axis, then stop using this set of axes as we
+		// found that there is no collision; return false
+		if (set1Max < set2Min || set2Max < set1Min)
+		{
+			return false;
+		}
+	}
+	// 5.) There are no other conditions to be met, there is a collision
+	return true;
+}
+
+// Check whether a convex polygon interacts with a rectangle collider
+//	Params:
+//	polygon: The convex polygon
+//	rect: The rectangle
+bool ConvexHullToOrientedBoundingBoxIntersection(const ColliderConvex& polygon, const ColliderRectangle& rect)
+{
+	UNREFERENCED_PARAMETER(polygon);
+	UNREFERENCED_PARAMETER(rect);
+	return false;
 }
 
 // Check whether a moving point and line intersect.

@@ -38,6 +38,7 @@ typedef enum ColliderType
 	ColliderTypeRectangle,
 	ColliderTypeTilemap,
 	ColliderTypeLines,
+	ColliderTypeConvex,
 } ColliderType;
 
 //------------------------------------------------------------------------------

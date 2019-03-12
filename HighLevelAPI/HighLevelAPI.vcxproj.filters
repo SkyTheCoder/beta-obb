@@ -115,7 +115,7 @@
     <ClInclude Include="include\ColliderLine.h">
       <Filter>Collisions</Filter>
     </ClInclude>
-    <ClInclude Include="ColliderConvex.h">
+    <ClInclude Include="include\ColliderConvex.h">
       <Filter>Collisions</Filter>
     </ClInclude>
   </ItemGroup>
@@ -201,7 +201,7 @@
     <ClCompile Include="src\ColliderLine.cpp">
       <Filter>Collisions</Filter>
     </ClCompile>
-    <ClCompile Include="ColliderConvex.cpp">
+    <ClCompile Include="src\ColliderConvex.cpp">
       <Filter>Collisions</Filter>
     </ClCompile>
   </ItemGroup>
