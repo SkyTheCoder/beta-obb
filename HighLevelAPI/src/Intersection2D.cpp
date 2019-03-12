@@ -122,8 +122,8 @@ bool OrientedBoundingBoxIntersection(const ColliderRectangle& rect1, const Colli
 void ProjectPolygon(const Vector2D& normal, const std::vector<Vector2D>& vertices, float& minValue, float& maxValue)
 {
 	// Get the minimum and maximum projetions of the first polygon in the line
-	float minValue = -std::numeric_limits<float>::lowest();
-	float maxValue = std::numeric_limits<float>::lowest();
+	minValue = -std::numeric_limits<float>::lowest();
+	maxValue = std::numeric_limits<float>::lowest();
 	// Project the vertex into the normal and save the edges of the first projecte polygon into the line
 	// minimum and maximum
 	for (auto vertex = vertices.cbegin(); vertex < vertices.cend(); ++vertex)
