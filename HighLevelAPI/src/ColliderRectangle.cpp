@@ -102,12 +102,15 @@ void ColliderRectangle::Draw()
 	}
 	else
 	{
+		// Get the corners of the rectangle in object space.
 		Vector2D points[4];
 		GetOrientedBoundingBoxCorners(*this, points);
 
+		// Transform the corners into world space.
 		for (unsigned i = 0; i < 4; i++)
 			points[i] = transform->GetMatrix() * points[i];
 
+		// Draw the rectangle using the world space corners.
 		debugDraw.AddLineToStrip(points[0], points[1], Colors::Green);
 		debugDraw.AddLineToStrip(points[1], points[2], Colors::Green);
 		debugDraw.AddLineToStrip(points[2], points[3], Colors::Green);

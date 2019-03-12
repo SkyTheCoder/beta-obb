@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 //
 // File Name:	Intersection2D.cpp
-// Author(s):	David Cohen & David Wong Cascante (david.cohen)
+// Author(s):	David Cohen (david.cohen) and David Wong (david.wongcascante)
 // Project:		Project 7
 // Course:		WANIC VGP2 2018-2019
 //

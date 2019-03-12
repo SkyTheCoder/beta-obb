@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 //
 // File Name:	Intersection2D.h
-// Author(s):	Jeremy Kings (j.kings)
+// Author(s):	Jeremy Kings (j.kings), David Cohen (david.cohen), and David Wong (david.wongcascante)
 // Project:		Project 7
 // Course:		WANIC VGP2 2018-2019
 //
