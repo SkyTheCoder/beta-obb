@@ -71,6 +71,12 @@ bool RectangleRectangleIntersection(const BoundingRectangle& rect1, const Boundi
 //   True if intersection, false otherwise.
 bool RectangleCircleIntersection(const BoundingRectangle& rect, const Circle& circle);
 
+// Calculates the (object space) corner points of a rectangle.
+// Params:
+//   rect = The ColliderRectangle to calculate points for.
+//   out = The output array of points. Assumed to have a size of 4.
+void GetOrientedBoundingBoxCorners(const ColliderRectangle& rect, Vector2D out[4]);
+
 // Check whether two oriented bounding boxes intersect.
 // Params:
 //  rect1 = The first oriented bounding box.

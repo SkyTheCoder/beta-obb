@@ -100,27 +100,24 @@ bool RectangleCircleIntersection(const BoundingRectangle& rect, const Circle& ci
 	return point.DistanceSquared(circle.center) <= circle.radius * circle.radius;
 }
 
-namespace
+// Calculates the (object space) corner points of a rectangle.
+// Params:
+//   rect = The ColliderRectangle to calculate points for.
+//   out = The output array of points. Assumed to have a size of 4.
+void GetOrientedBoundingBoxCorners(const ColliderRectangle& rect, Vector2D out[4])
 {
-	// Calculates the corner points of a rectangle.
-	// Params:
-	//   rect = The ColliderRectangle to calculate points for.
-	//   out = The output array of points. Assumed to have a size of 4.
-	void GetCorners(const ColliderRectangle& rect, Vector2D out[4])
-	{
-		Vector2D extents = rect.GetExtents();
-		Vector2D scale = rect.transform->GetScale();
+	Vector2D extents = rect.GetExtents();
+	Vector2D scale = rect.transform->GetScale();
 
-		// These points will have the transformation matrix applied to them later, so we want to remove scaling right now.
-		extents.x /= scale.x;
-		extents.y /= scale.y;
+	// These points will have the transformation matrix applied to them later, so we want to remove scaling right now.
+	extents.x /= scale.x;
+	extents.y /= scale.y;
 
-		// Calculate the corners.
-		out[0] = extents;
-		out[1] = Vector2D(-extents.x, extents.y);
-		out[2] = Vector2D(extents.x, -extents.y);
-		out[3] = -extents;
-	}
+	// Calculate the corners.
+	out[0] = Vector2D(-extents.x, extents.y);
+	out[1] = extents;
+	out[2] = Vector2D(extents.x, -extents.y);
+	out[3] = -extents;
 }
 
 // Check whether two oriented bounding boxes intersect.
@@ -146,8 +143,8 @@ bool OrientedBoundingBoxIntersection(const ColliderRectangle& rect1, const Colli
 	Vector2D points2[4];
 
 	// Gather the points for both rectangles.
-	GetCorners(rect1, points1);
-	GetCorners(rect2, points2);
+	GetOrientedBoundingBoxCorners(rect1, points1);
+	GetOrientedBoundingBoxCorners(rect2, points2);
 
 	// Loop through each normal.
 	for (unsigned i = 0; i < 4; i++)

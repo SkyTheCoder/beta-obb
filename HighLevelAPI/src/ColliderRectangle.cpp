@@ -30,6 +30,25 @@
 
 //------------------------------------------------------------------------------
 
+namespace
+{
+	// Helper function to keep a value within a range.
+	// Params:
+	//   value = The value to loop.
+	//   min = The lower bounds of the value.
+	//   max = The upper bounds of the value.
+	// Returns:
+	//   value, adjusted to be within the range of min-max.
+	float Loop(float value, float min, float max)
+	{
+		while (value < min)
+			value += (max - min);
+		while (value > max)
+			value -= (max - min);
+		return value;
+	}
+}
+
 //------------------------------------------------------------------------------
 // Public Functions:
 //------------------------------------------------------------------------------
@@ -70,7 +89,25 @@ void ColliderRectangle::Draw()
 {
 	// Draw the rectangle using DebugDraw.
 	DebugDraw& debugDraw = DebugDraw::GetInstance();
-	debugDraw.AddRectangle(transform->GetTranslation(), extents, Graphics::GetInstance().GetCurrentCamera(), Colors::Green);
+
+	if (AlmostEqual(Loop(transform->GetRotation(), -M_PI_F / 2.0f, M_PI_F / 2.0f), 0.0f))
+	{
+		debugDraw.AddRectangle(transform->GetTranslation(), extents, Graphics::GetInstance().GetCurrentCamera(), Colors::Green);
+	}
+	else
+	{
+		Vector2D points[4];
+		GetOrientedBoundingBoxCorners(*this, points);
+
+		for (unsigned i = 0; i < 4; i++)
+			points[i] = transform->GetMatrix() * points[i];
+
+		debugDraw.AddLineToStrip(points[0], points[1], Colors::Green);
+		debugDraw.AddLineToStrip(points[1], points[2], Colors::Green);
+		debugDraw.AddLineToStrip(points[2], points[3], Colors::Green);
+		debugDraw.AddLineToStrip(points[3], points[0], Colors::Green);
+		debugDraw.EndLineStrip(Graphics::GetInstance().GetCurrentCamera());
+	}
 }
 
 // Get the rectangle collider's extents (half-width, half-height).
@@ -87,25 +124,6 @@ const Vector2D& ColliderRectangle::GetExtents() const
 void ColliderRectangle::SetExtents(const Vector2D& extents_)
 {
 	extents = extents_;
-}
-
-namespace
-{
-	// Helper function to keep a value within a range.
-	// Params:
-	//   value = The value to loop.
-	//   min = The lower bounds of the value.
-	//   max = The upper bounds of the value.
-	// Returns:
-	//   value, adjusted to be within the range of min-max.
-	float Loop(float value, float min, float max)
-	{
-		while (value < min)
-			value += (max - min);
-		while (value > max)
-			value -= (max - min);
-		return value;
-	}
 }
 
 // Check for collision between a rectangle and another arbitrary collider.
