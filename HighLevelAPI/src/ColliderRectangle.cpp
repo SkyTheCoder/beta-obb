@@ -90,9 +90,15 @@ void ColliderRectangle::Draw()
 	// Draw the rectangle using DebugDraw.
 	DebugDraw& debugDraw = DebugDraw::GetInstance();
 
-	if (AlmostEqual(Loop(transform->GetRotation(), -M_PI_F / 2.0f, M_PI_F / 2.0f), 0.0f))
+	if (AlmostEqual(Loop(transform->GetRotation(), -M_PI_F / 4.0f, M_PI_F / 4.0f), 0.0f))
 	{
-		debugDraw.AddRectangle(transform->GetTranslation(), extents, Graphics::GetInstance().GetCurrentCamera(), Colors::Green);
+		Vector2D tempExtents = extents;
+
+		// Check if angles are +/- 90 degrees instead of 0 or 180 degrees, and rotate them if so.
+		if (!AlmostEqual(Loop(transform->GetRotation(), -M_PI_F / 2.0f, M_PI_F / 2.0f), 0.0f))
+			std::swap(tempExtents.x, tempExtents.y);
+
+		debugDraw.AddRectangle(transform->GetTranslation(), tempExtents, Graphics::GetInstance().GetCurrentCamera(), Colors::Green);
 	}
 	else
 	{
