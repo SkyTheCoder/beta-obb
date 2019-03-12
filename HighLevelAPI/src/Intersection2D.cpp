@@ -20,6 +20,7 @@
 // Components
 #include "Transform.h"
 #include "Physics.h"
+#include "ColliderRectangle.h"
 
 //------------------------------------------------------------------------------
 
@@ -99,6 +100,29 @@ bool RectangleCircleIntersection(const BoundingRectangle& rect, const Circle& ci
 	return point.DistanceSquared(circle.center) <= circle.radius * circle.radius;
 }
 
+namespace
+{
+	// Calculates the corner points of a rectangle.
+	// Params:
+	//   rect = The ColliderRectangle to calculate points for.
+	//   out = The output array of points. Assumed to have a size of 4.
+	void GetCorners(const ColliderRectangle& rect, Vector2D out[4])
+	{
+		Vector2D extents = rect.GetExtents();
+		Vector2D scale = rect.transform->GetScale();
+
+		// These points will have the transformation matrix applied to them later, so we want to remove scaling right now.
+		extents.x /= scale.x;
+		extents.y /= scale.y;
+
+		// Calculate the corners.
+		out[0] = extents;
+		out[1] = Vector2D(-extents.x, extents.y);
+		out[2] = Vector2D(extents.x, -extents.y);
+		out[3] = -extents;
+	}
+}
+
 // Check whether two oriented bounding boxes intersect.
 // Params:
 //  rect1 = The first oriented bounding box.
@@ -107,11 +131,52 @@ bool RectangleCircleIntersection(const BoundingRectangle& rect, const Circle& ci
 //   True if intersection, false otherwise.
 bool OrientedBoundingBoxIntersection(const ColliderRectangle& rect1, const ColliderRectangle& rect2)
 {
-	UNREFERENCED_PARAMETER(rect1);
-	UNREFERENCED_PARAMETER(rect2);
+	float angle1 = rect1.transform->GetRotation();
+	float angle2 = rect2.transform->GetRotation();
 
-	// Stub
-	return false;
+	Vector2D normals[4];
+
+	// Calculate all the normals we need to check for gaps along.
+	normals[0] = Vector2D(cos(angle1), sin(angle1));
+	normals[1] = Vector2D(-normals[0].y, normals[0].x);
+	normals[2] = Vector2D(cos(angle2), sin(angle2));
+	normals[3] = Vector2D(-normals[2].y, normals[2].x);
+
+	Vector2D points1[4];
+	Vector2D points2[4];
+
+	// Gather the points for both rectangles.
+	GetCorners(rect1, points1);
+	GetCorners(rect2, points2);
+
+	// Loop through each normal.
+	for (unsigned i = 0; i < 4; i++)
+	{
+		float minExtents1 = FLT_MAX;
+		float maxExtents1 = -FLT_MAX;
+		float minExtents2 = FLT_MAX;
+		float maxExtents2 = -FLT_MAX;
+		
+		for (unsigned j = 0; j < 4; j++)
+		{
+			// Project the current point from each rectangle along the current axis.
+			float projectedPoint1 = (rect1.transform->GetMatrix() * points1[j]).DotProduct(normals[i]);
+			float projectedPoint2 = (rect2.transform->GetMatrix() * points2[j]).DotProduct(normals[i]);
+
+			// Update the min/max extents of each rectangle.
+			maxExtents1 = max(maxExtents1, projectedPoint1);
+			minExtents1 = min(minExtents1, projectedPoint1);
+			maxExtents2 = max(maxExtents2, projectedPoint2);
+			minExtents2 = min(minExtents2, projectedPoint2);
+		}
+
+		// If there is a gap between the min and max extents on this axis, the OBBs are not colliding.
+		if (maxExtents1 < minExtents2 || maxExtents2 < minExtents1)
+			return false;
+	}
+
+	// If we reached this point, there is no gap, the OBBs are colliding.
+	return true;
 }
 
 // Check whether a moving point and line intersect.

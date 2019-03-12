@@ -75,15 +75,19 @@ namespace Levels
 
 		// Rectangles.
 		GameObject* rectangle = objectFactory.CreateObject("Rectangle", resourceManager.GetMesh("Quad"));
-		rectangle->GetComponent<Transform>()->SetTranslation(Vector2D(-200.0f, 225.0f));
+		rectangle->GetComponent<Transform>()->SetTranslation(Vector2D(-200.0f, 250.0f));
+		rectangle->GetComponent<Transform>()->SetRotation(-M_PI_F / 8.0f);
 		rectangle->GetComponent<Physics>()->SetVelocity(Vector2D(50.0f, -75.0f));
+		rectangle->GetComponent<Physics>()->SetAngularVelocity(M_PI_F / 2.0f);
 		objectManager.AddObject(*rectangle);
 
 		rectangle = objectFactory.CreateObject("Rectangle", resourceManager.GetMesh("Quad"));
 		rectangle->GetComponent<Transform>()->SetTranslation(Vector2D(50.0f, -150.0f));
+		rectangle->GetComponent<Transform>()->SetRotation(M_PI_F / 8.0f);
 		rectangle->GetComponent<Physics>()->SetVelocity(Vector2D(0.0f, 0.0f));
 		objectManager.AddObject(*rectangle);
 
+#if 0
 		// Circles.
 		GameObject* circle = objectFactory.CreateObject("Circle", resourceManager.GetMesh("Quad"), resourceManager.GetSpriteSource("Circle.png"));
 		objectManager.AddObject(*circle);
@@ -98,6 +102,7 @@ namespace Levels
 		point->GetComponent<Transform>()->SetTranslation(Vector2D(0.0f, 100.0f));
 		point->GetComponent<Physics>()->SetVelocity(Vector2D(0.0f, -50.0f));
 		objectManager.AddObject(*point);
+#endif
 	}
 
 	// Update Level 3.

@@ -15,6 +15,7 @@
 
 #define _USE_MATH_DEFINES
 #include <cmath>	// M_PI
+#define M_PI_F (static_cast<float>(M_PI))
 #include <iostream>
 #include <fstream>
 #include <string>
