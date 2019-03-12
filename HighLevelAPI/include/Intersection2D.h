@@ -78,14 +78,6 @@ bool RectangleCircleIntersection(const BoundingRectangle& rect, const Circle& ci
 //   out = The output array of points. Assumed to have a size of 4.
 void GetOrientedBoundingBoxCorners(const ColliderRectangle& rect, Vector2D out[4]);
 
-// Projects a polygon into a normal
-// Params:
-//	normal: The normal we are using to project the polygon
-//	vertices: The vertices we are projecting into the normal
-//	min: The minimum value of the polygon as a result of projecting it into the normal
-//	max: The maximum value of the polygon as a result of projection it into the normal
-void ProjectPolygon(const Vector2D& normal, const std::vector<Vector2D>& vertices, float& min, float& max);
-
 // Check whether two oriented bounding boxes intersect.
 // Params:
 //  rect1 = The first rectangle.
@@ -93,6 +85,14 @@ void ProjectPolygon(const Vector2D& normal, const std::vector<Vector2D>& vertice
 // Returns:
 //   True if intersection, false otherwise.
 bool OrientedBoundingBoxIntersection(const ColliderRectangle& rect1, const ColliderRectangle& rect2);
+
+// Projects a polygon into a normal
+// Params:
+//	normal: The normal we are using to project the polygon
+//	vertices: The vertices we are projecting into the normal
+//	min: The minimum value of the polygon as a result of projecting it into the normal
+//	max: The maximum value of the polygon as a result of projection it into the normal
+void ProjectPolygon(const Vector2D& normal, const std::vector<Vector2D>& vertices, float& min, float& max);
 
 // Check whether two convex polygons interact
 // Params:

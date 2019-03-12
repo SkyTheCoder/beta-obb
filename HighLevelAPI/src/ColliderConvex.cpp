@@ -114,7 +114,6 @@ const std::vector<LineSegment>& ColliderConvex::GetLocalLineSegments() const
 
 std::vector<LineSegment> ColliderConvex::GetLineSegments() const
 {
-	Transform* transform = GetOwner()->GetComponent<Transform>();
 	std::vector<LineSegment> transformed;
 	transformed.reserve(localPoints.size());
 

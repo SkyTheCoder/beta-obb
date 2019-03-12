@@ -23,6 +23,8 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+HighLevelAPI/lib/
+HighLevelAPI/x64/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
