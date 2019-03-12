@@ -115,6 +115,9 @@
     <ClInclude Include="include\ColliderLine.h">
       <Filter>Collisions</Filter>
     </ClInclude>
+    <ClInclude Include="include\ColliderConvex.h">
+      <Filter>Collisions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\stdafx.cpp">
@@ -196,6 +199,9 @@
       <Filter>GameObject\Systems</Filter>
     </ClCompile>
     <ClCompile Include="src\ColliderLine.cpp">
+      <Filter>Collisions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ColliderConvex.cpp">
       <Filter>Collisions</Filter>
     </ClCompile>
   </ItemGroup>

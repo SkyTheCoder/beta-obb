@@ -90,6 +90,7 @@
     <ClInclude Include="include\Animation.h" />
     <ClInclude Include="include\Collider.h" />
     <ClInclude Include="include\ColliderCircle.h" />
+    <ClInclude Include="include\ColliderConvex.h" />
     <ClInclude Include="include\ColliderLine.h" />
     <ClInclude Include="include\ColliderPoint.h" />
     <ClInclude Include="include\ColliderRectangle.h" />
@@ -119,6 +120,7 @@
     <ClCompile Include="src\Animation.cpp" />
     <ClCompile Include="src\Collider.cpp" />
     <ClCompile Include="src\ColliderCircle.cpp" />
+    <ClCompile Include="src\ColliderConvex.cpp" />
     <ClCompile Include="src\ColliderLine.cpp" />
     <ClCompile Include="src\ColliderPoint.cpp" />
     <ClCompile Include="src\ColliderRectangle.cpp" />
