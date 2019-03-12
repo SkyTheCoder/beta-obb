@@ -107,7 +107,8 @@ bool RectangleCircleIntersection(const BoundingRectangle& rect, const Circle& ci
 //   True if intersection, false otherwise.
 bool OrientedBoundingBoxIntersection(const ColliderRectangle& rect1, const ColliderRectangle& rect2)
 {
-
+	UNREFERENCED_PARAMETER(rect1);
+	UNREFERENCED_PARAMETER(rect2);
 
 	// Stub
 	return false;

@@ -89,6 +89,25 @@ void ColliderRectangle::SetExtents(const Vector2D& extents_)
 	extents = extents_;
 }
 
+namespace
+{
+	// Helper function to keep a value within a range.
+	// Params:
+	//   value = The value to loop.
+	//   min = The lower bounds of the value.
+	//   max = The upper bounds of the value.
+	// Returns:
+	//   value, adjusted to be within the range of min-max.
+	float Loop(float value, float min, float max)
+	{
+		while (value < min)
+			value += (max - min);
+		while (value > max)
+			value -= (max - min);
+		return value;
+	}
+}
+
 // Check for collision between a rectangle and another arbitrary collider.
 // Params:
 //	 other = Reference to the second collider component.
@@ -125,43 +144,39 @@ bool ColliderRectangle::IsCollidingWith(const Collider& other) const
 		// Normalize the angles to within -PI/2, +PI/2
 
 		float angle1 = transform->GetRotation();
-		while (angle1 < -static_cast<float>(M_PI) / 2.0f)
-			angle1 += static_cast<float>(M_PI);
-		while (angle1 > static_cast<float>(M_PI) / 2.0f)
-			angle1 -= static_cast<float>(M_PI);
-
 		float angle2 = other.transform->GetRotation();
-		while (angle2 < -static_cast<float>(M_PI) / 2.0f)
-			angle2 += static_cast<float>(M_PI);
-		while (angle2 > static_cast<float>(M_PI) / 2.0f)
-			angle2 -= static_cast<float>(M_PI);
 
-		if (AlmostEqual(angle1, static_cast<float>(M_PI) / 2.0f) || AlmostEqual(angle1, -static_cast<float>(M_PI) / 2.0f))
+		// Calculate whether the angles are axis-aligned (multiples of 90 degrees)
+		bool angle1AxisAligned = AlmostEqual(Loop(angle1, -M_PI_F / 4.0f, M_PI_F / 4.0f), 0.0f);
+		bool angle2AxisAligned = AlmostEqual(Loop(angle2, -M_PI_F / 4.0f, M_PI_F / 4.0f), 0.0f);
+
+		if (angle1AxisAligned && angle2AxisAligned)
 		{
-			std::swap(rectangle.extents.x, rectangle.extents.y);
-			rectangle.left = rectangle.center.x - rectangle.extents.x;
-			rectangle.top = rectangle.center.y + rectangle.extents.y;
-			rectangle.right = rectangle.center.x + rectangle.extents.x;
-			rectangle.bottom = rectangle.center.y - rectangle.extents.y;
+			BoundingRectangle otherBoundingRectangle(otherTranslation, otherRectangle.GetExtents());
 
-			angle1 = 0.0f;
-		}
+			// Check if angles are +/- 90 degrees instead of 0 or 180 degrees, and rotate them if so.
+			if (!AlmostEqual(Loop(angle1, -M_PI_F / 2.0f, M_PI_F / 2.0f), 0.0f))
+			{
+				std::swap(rectangle.extents.x, rectangle.extents.y);
+				rectangle.left = rectangle.center.x - rectangle.extents.x;
+				rectangle.top = rectangle.center.y + rectangle.extents.y;
+				rectangle.right = rectangle.center.x + rectangle.extents.x;
+				rectangle.bottom = rectangle.center.y - rectangle.extents.y;
 
-		BoundingRectangle otherBoundingRectangle(otherTranslation, otherRectangle.GetExtents());
+				angle1 = 0.0f;
+			}
 
-		if (AlmostEqual(angle2, static_cast<float>(M_PI) / 2.0f) || AlmostEqual(angle2, -static_cast<float>(M_PI) / 2.0f))
-		{
-			std::swap(otherBoundingRectangle.extents.x, otherBoundingRectangle.extents.y);
-			otherBoundingRectangle.left = otherBoundingRectangle.center.x - otherBoundingRectangle.extents.x;
-			otherBoundingRectangle.top = otherBoundingRectangle.center.y + otherBoundingRectangle.extents.y;
-			otherBoundingRectangle.right = otherBoundingRectangle.center.x + otherBoundingRectangle.extents.x;
-			otherBoundingRectangle.bottom = otherBoundingRectangle.center.y - otherBoundingRectangle.extents.y;
+			if (!AlmostEqual(Loop(angle2, -M_PI_F / 2.0f, M_PI_F / 2.0f), 0.0f))
+			{
+				std::swap(otherBoundingRectangle.extents.x, otherBoundingRectangle.extents.y);
+				otherBoundingRectangle.left = otherBoundingRectangle.center.x - otherBoundingRectangle.extents.x;
+				otherBoundingRectangle.top = otherBoundingRectangle.center.y + otherBoundingRectangle.extents.y;
+				otherBoundingRectangle.right = otherBoundingRectangle.center.x + otherBoundingRectangle.extents.x;
+				otherBoundingRectangle.bottom = otherBoundingRectangle.center.y - otherBoundingRectangle.extents.y;
 
-			angle2 = 0.0f;
-		}
+				angle2 = 0.0f;
+			}
 
-		if (AlmostEqual(angle1, 0.0f) && AlmostEqual(angle2, 0.0f))
-		{
 			// Check if the other rectangle is intersecting the rectangle.
 			return RectangleRectangleIntersection(rectangle, otherBoundingRectangle);
 		}
