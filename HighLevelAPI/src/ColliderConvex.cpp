@@ -99,7 +99,7 @@ bool ColliderConvex::IsCollidingWith(const Collider& other) const
 	case ColliderType::ColliderTypeRectangle:
 	{
 		const ColliderRectangle& rectangle = static_cast<const ColliderRectangle&>(other);
-		return ConvexHullToOrientedBoundingBoxIntersection(*this, rectangle);
+		return ConvexHullToOBBIntersection(*this, rectangle);
 
 	}
 	default:

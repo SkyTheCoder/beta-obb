@@ -1,4 +1,4 @@
-//------------------------------------------------------------------------------
+p n//------------------------------------------------------------------------------
 //
 // File Name:	Main.cpp
 // Author(s):	Jeremy Kings (j.kings)
@@ -36,6 +36,7 @@
 #include "TimedDeath.h"
 #include "PlayerProjectile.h"
 #include "Asteroid.h"
+#include "MouseFollow.h"
 
 //------------------------------------------------------------------------------
 
@@ -67,6 +68,7 @@ int WINAPI WinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prevInstance, _In
 	objectFactory.RegisterComponent<Behaviors::TimedDeath>();
 	objectFactory.RegisterComponent<Behaviors::PlayerProjectile>();
 	objectFactory.RegisterComponent<Behaviors::Asteroid>();
+	objectFactory.RegisterComponent<Behaviors::MouseFollow>();
 
 	// Create a new space called "GameSpace"
 	Space* space = new Space("GameSpace");

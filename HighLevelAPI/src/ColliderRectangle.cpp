@@ -104,7 +104,7 @@ void ColliderRectangle::Draw()
 	{
 		// Get the corners of the rectangle in object space.
 		Vector2D points[4];
-		GetOrientedBoundingBoxCorners(*this, points);
+		GetOBBCorners(*this, points);
 
 		// Transform the corners into world space.
 		for (unsigned i = 0; i < 4; i++)
@@ -210,7 +210,7 @@ bool ColliderRectangle::IsCollidingWith(const Collider& other) const
 		else
 		{
 			// Check if the other oriented bounding box is intersecting the oriented bounding box.
-			return OrientedBoundingBoxIntersection(*this, otherRectangle);
+			return OBBOBBIntersection(*this, otherRectangle);
 		}
 	}
 	}

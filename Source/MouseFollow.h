@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	PlayerShip.h
-// Author(s):	Jeremy Kings (j.kings)
+// File Name:	MouseFollow.h
+// Author(s):	David Cohen (david.cohen)
 // Project:		BetaFramework
 // Course:		WANIC VGP2 2018-2019
 //
@@ -24,7 +24,6 @@
 //------------------------------------------------------------------------------
 
 class Transform;
-class Physics;
 
 //------------------------------------------------------------------------------
 // Public Structures:
@@ -33,7 +32,7 @@ class Physics;
 namespace Behaviors
 {
 
-	class PlayerShip : public Component
+	class MouseFollow : public Component
 	{
 	public:
 		//------------------------------------------------------------------------------
@@ -42,13 +41,8 @@ namespace Behaviors
 
 		// Constructor
 		// Params:
-		//   forwardThrust	= Amount of force added to the ship when thrusters are activated.
-		//   maximumSpeed	= Maximum attainable speed of the ship.
-		//   rotationSpeed	= Speed at which the ship rotates.
-		//   bulletSpeed	= Speed at which bullets move when fired by ship.
-		//   deathDuration	= Length of death "animation" in seconds.
-		PlayerShip(float forwardThrust = 150.0f, float maximumSpeed = 100.0f, 
-			float rotationSpeed = M_PI_F, float bulletSpeed = 200.0f, float deathDuration = 4.0f);
+		//   rotationSpeed	= Speed at which the object rotates.
+		MouseFollow(float rotationSpeed = M_PI_F);
 
 		// Clone a component and return a pointer to the cloned component.
 		// Returns:
@@ -58,10 +52,10 @@ namespace Behaviors
 		// Initialize this component (happens at object creation).
 		void Initialize() override;
 
-		// Update function for this component.
+		// Updates components using a fixed timestep (usually just physics)
 		// Params:
-		//   dt = The (fixed) change in time since the last step.
-		void Update(float dt) override;
+		//	 dt = A fixed change in time, usually 1/60th of a second.
+		void FixedUpdate(float dt) override;
 
 		// Write object data to file
 		// Params:
@@ -72,62 +66,17 @@ namespace Behaviors
 		// Params:
 		//   parser = The parser that is reading this object's data from a file.
 		void Deserialize(Parser& parser) override;
-		
-		// Returns player's score
-		unsigned GetScore() const;
-
-		// Increase player's score
-		// Params:
-		//   amount = This value is added to the player's current score.
-		void IncreaseScore(unsigned amount);
 
 	private:
-		//------------------------------------------------------------------------------
-		// Private Functions:
-		//------------------------------------------------------------------------------
-
-		// Move forward when up arrow is pressed
-		void Move() const;
-
-		// Rotate when left or right arrow key is pressed
-		void Rotate() const;
-
-		// Shoot projectiles when space is pressed
-		void Shoot();
-
-		// Play death "animation"
-		// Params:
-		//   dt = How much time has passed since the last frame.
-		void DeathSequence(float dt);
-
-		// Collision start event handler.
-		// Params:
-		//	 ship = The player ship.
-		//   otherObject = The other object.
-		static friend void CollisionHandlerShip(GameObject& ship, GameObject& otherObject);
-
 		//------------------------------------------------------------------------------
 		// Private Variables:
 		//------------------------------------------------------------------------------
 
 		// Properties (save to/load from file)
-		float forwardThrust;
-		float maximumSpeed;
 		float rotationSpeed;
-		float bulletSpeed;
-		float deathDuration;
-
-		// Bullet archetype
-		GameObject* bulletArchetype;
 
 		// Components
 		Transform* transform;
-		Physics* physics;
-
-		// Other variables
-		float timer;
-		bool isDying;
-		unsigned score;
 	};
 }
 

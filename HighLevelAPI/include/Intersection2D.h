@@ -76,7 +76,7 @@ bool RectangleCircleIntersection(const BoundingRectangle& rect, const Circle& ci
 // Params:
 //   rect = The ColliderRectangle to calculate points for.
 //   out = The output array of points. Assumed to have a size of 4.
-void GetOrientedBoundingBoxCorners(const ColliderRectangle& rect, Vector2D out[4]);
+void GetOBBCorners(const ColliderRectangle& rect, Vector2D out[4]);
 
 // Check whether two oriented bounding boxes intersect.
 // Params:
@@ -84,7 +84,7 @@ void GetOrientedBoundingBoxCorners(const ColliderRectangle& rect, Vector2D out[4
 //	rect2 = The second rectangle.
 // Returns:
 //   True if intersection, false otherwise.
-bool OrientedBoundingBoxIntersection(const ColliderRectangle& rect1, const ColliderRectangle& rect2);
+bool OBBOBBIntersection(const ColliderRectangle& rect1, const ColliderRectangle& rect2);
 
 // Projects a polygon into a normal
 // Params:
@@ -106,7 +106,7 @@ bool ConvexHullIntersection(const ColliderConvex& polygon1, const ColliderConvex
 //	Params:
 //	polygon: The convex polygon
 //	rect: The rectangle
-bool ConvexHullToOrientedBoundingBoxIntersection(const ColliderConvex& polygon, const ColliderRectangle& rect);
+bool ConvexHullToOBBIntersection(const ColliderConvex& polygon, const ColliderRectangle& rect);
 
 // Check whether a moving point and line intersect.
 // Params:

@@ -54,6 +54,8 @@ namespace Levels
 	// Load the resources associated with Level 3.
 	void Level1::Load()
 	{
+		GameObjectFactory& objectFactory = GameObjectFactory::GetInstance();
+		GameObjectManager& objectManager = GetSpace()->GetObjectManager();
 		ResourceManager& resourceManager = GetSpace()->GetResourceManager();
 
 		// Create a new quad mesh for the sprite.
@@ -61,30 +63,34 @@ namespace Levels
 
 		// Load the circle texture and sprite source.
 		resourceManager.GetSpriteSource("Circle.png");
+
+		// Load the archetypes from their files.
+		objectManager.AddArchetype(*objectFactory.CreateObject("Rectangle", resourceManager.GetMesh("Quad")));
+		objectManager.AddArchetype(*objectFactory.CreateObject("ControllableRectangle", resourceManager.GetMesh("Quad")));
 	}
 
 	// Initialize the memory associated with Level 3.
 	void Level1::Initialize()
 	{
 		GameObjectManager& objectManager = GetSpace()->GetObjectManager();
-		ResourceManager& resourceManager = GetSpace()->GetResourceManager();
 
 		// Add various physics objects to the scene.
 
-		GameObjectFactory& objectFactory = GameObjectFactory::GetInstance();
-
 		// Rectangles.
-		GameObject* rectangle = objectFactory.CreateObject("Rectangle", resourceManager.GetMesh("Quad"));
+		GameObject* rectangle = new GameObject(*objectManager.GetArchetypeByName("Rectangle"));
 		rectangle->GetComponent<Transform>()->SetTranslation(Vector2D(-200.0f, 250.0f));
 		rectangle->GetComponent<Transform>()->SetRotation(-M_PI_F / 8.0f);
 		rectangle->GetComponent<Physics>()->SetVelocity(Vector2D(50.0f, -75.0f));
 		rectangle->GetComponent<Physics>()->SetAngularVelocity(M_PI_F / 2.0f);
 		objectManager.AddObject(*rectangle);
 
-		rectangle = objectFactory.CreateObject("Rectangle", resourceManager.GetMesh("Quad"));
+		rectangle = new GameObject(*objectManager.GetArchetypeByName("Rectangle"));
 		rectangle->GetComponent<Transform>()->SetTranslation(Vector2D(50.0f, -150.0f));
 		rectangle->GetComponent<Transform>()->SetRotation(M_PI_F / 8.0f);
 		rectangle->GetComponent<Physics>()->SetVelocity(Vector2D(0.0f, 0.0f));
+		objectManager.AddObject(*rectangle);
+
+		rectangle = new GameObject(*objectManager.GetArchetypeByName("ControllableRectangle"));
 		objectManager.AddObject(*rectangle);
 
 #if 0
