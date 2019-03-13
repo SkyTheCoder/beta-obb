@@ -182,6 +182,56 @@ bool OBBOBBIntersection(const ColliderRectangle& rect1, const ColliderRectangle&
 	return true;
 }
 
+// Check whether an oriented bounding box and a point intersect.
+// Params:
+//  rect = The OBB.
+//	point = The point.
+// Returns:
+//   True if intersection, false otherwise.
+bool OBBPointIntersection(const ColliderRectangle& rect, const Vector2D& point)
+{
+	float angle1 = rect.transform->GetRotation();
+
+	Vector2D normals[3];
+
+	// Calculate all the normals we need to check for gaps along.
+	normals[0] = Vector2D(cos(angle1), sin(angle1));
+	normals[1] = Vector2D(-normals[0].y, normals[0].x);
+	normals[2] = (point - rect.transform->GetTranslation()).Normalized(); // Direction from the rectangle to the point
+
+	Vector2D points[4];
+
+	// Gather the points for the rectangle.
+	GetOBBCorners(rect, points);
+
+	// Loop through each normal.
+	for (unsigned i = 0; i < 3; i++)
+	{
+		float minExtents = FLT_MAX;
+		float maxExtents = -FLT_MAX;
+
+		// Project the circle's center along the current axis.
+		float projectedPointCenter = point.DotProduct(normals[i]);
+
+		for (unsigned j = 0; j < 4; j++)
+		{
+			// Project the current point from the rectangle along the current axis.
+			float projectedPoint = (rect.transform->GetMatrix() * points[j]).DotProduct(normals[i]);
+
+			// Update the min/max extents of the rectangle.
+			maxExtents = max(maxExtents, projectedPoint);
+			minExtents = min(minExtents, projectedPoint);
+		}
+
+		// If there is a gap between the min and max extents on this axis, the OBB and circle are not colliding.
+		if (maxExtents < projectedPointCenter || projectedPointCenter < minExtents)
+			return false;
+	}
+
+	// If we reached this point, there is no gap, the OBB and circle are colliding.
+	return true;
+}
+
 // Check whether an oriented bounding box and a circle intersect.
 // Params:
 //  rect = The rectangle.

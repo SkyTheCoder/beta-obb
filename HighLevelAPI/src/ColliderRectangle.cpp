@@ -170,8 +170,16 @@ bool ColliderRectangle::IsCollidingWith(const Collider& other) const
 	{
 	case ColliderTypePoint:
 	{
-		// Check if the point is intersecting the rectangle.
-		return PointRectangleIntersection(otherTranslation, rectangle);
+		if (angle1AxisAligned)
+		{
+			// Check if the point is intersecting the rectangle.
+			return PointRectangleIntersection(otherTranslation, rectangle);
+		}
+		else
+		{
+			// Check if the point is intersecting the oriented bounding box.
+			return OBBPointIntersection(*this, otherTranslation);
+		}
 	}
 	case ColliderTypeCircle:
 	{

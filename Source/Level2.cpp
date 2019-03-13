@@ -68,8 +68,8 @@ namespace Levels
 		resourceManager.GetSpriteSource("Circle.png");
 
 		// Load the archetypes from their files.
-		objectManager.AddArchetype(*objectFactory.CreateObject("Rectangle", resourceManager.GetMesh("Quad")));
 		objectManager.AddArchetype(*objectFactory.CreateObject("Circle", resourceManager.GetMesh("Quad"), resourceManager.GetSpriteSource("Circle.png")));
+		objectManager.AddArchetype(*objectFactory.CreateObject("Point", resourceManager.GetMesh("Quad"), resourceManager.GetSpriteSource("Circle.png")));
 		objectManager.AddArchetype(*objectFactory.CreateObject("ControllableRectangle", resourceManager.GetMesh("Quad")));
 	}
 
@@ -84,6 +84,11 @@ namespace Levels
 		GameObject* circle = new GameObject(*objectManager.GetArchetypeByName("Circle"));
 		circle->GetComponent<Transform>()->SetTranslation(Vector2D(100.0f, 100.0f));
 		objectManager.AddObject(*circle);
+
+		// Points.
+		GameObject* point = new GameObject(*objectManager.GetArchetypeByName("Point"));
+		point->GetComponent<Transform>()->SetTranslation(Vector2D(-150.0f, -150.0f));
+		objectManager.AddObject(*point);
 
 		// Controllable rectangles.
 		GameObject* controllableRectangle = new GameObject(*objectManager.GetArchetypeByName("ControllableRectangle"));
