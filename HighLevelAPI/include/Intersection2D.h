@@ -67,7 +67,7 @@ bool RectangleRectangleIntersection(const BoundingRectangle& rect1, const Boundi
 // Check whether a rectangle and circle intersect.
 // Params:
 //  rect = The rectangle.
-//  circle  = The circle.
+//  circle = The circle.
 // Returns:
 //   True if intersection, false otherwise.
 bool RectangleCircleIntersection(const BoundingRectangle& rect, const Circle& circle);
@@ -85,6 +85,14 @@ void GetOBBCorners(const ColliderRectangle& rect, Vector2D out[4]);
 // Returns:
 //   True if intersection, false otherwise.
 bool OBBOBBIntersection(const ColliderRectangle& rect1, const ColliderRectangle& rect2);
+
+// Check whether an oriented bounding box and a circle intersect.
+// Params:
+//  rect = The OBB.
+//	circle = The circle.
+// Returns:
+//   True if intersection, false otherwise.
+bool OBBCircleIntersection(const ColliderRectangle& rect, const Circle& circle);
 
 // Projects a polygon into a normal
 // Params:

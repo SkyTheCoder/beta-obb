@@ -66,6 +66,7 @@ namespace Levels
 
 		// Load the archetypes from their files.
 		objectManager.AddArchetype(*objectFactory.CreateObject("Rectangle", resourceManager.GetMesh("Quad")));
+		objectManager.AddArchetype(*objectFactory.CreateObject("Circle", resourceManager.GetMesh("Quad"), resourceManager.GetSpriteSource("Circle.png")));
 		objectManager.AddArchetype(*objectFactory.CreateObject("ControllableRectangle", resourceManager.GetMesh("Quad")));
 	}
 
@@ -77,7 +78,7 @@ namespace Levels
 		// Add various physics objects to the scene.
 
 		// Rectangles.
-		GameObject* rectangle = new GameObject(*objectManager.GetArchetypeByName("Rectangle"));
+		/*GameObject* rectangle = new GameObject(*objectManager.GetArchetypeByName("Rectangle"));
 		rectangle->GetComponent<Transform>()->SetTranslation(Vector2D(-200.0f, 250.0f));
 		rectangle->GetComponent<Transform>()->SetRotation(-M_PI_F / 8.0f);
 		rectangle->GetComponent<Physics>()->SetVelocity(Vector2D(50.0f, -75.0f));
@@ -88,10 +89,16 @@ namespace Levels
 		rectangle->GetComponent<Transform>()->SetTranslation(Vector2D(50.0f, -150.0f));
 		rectangle->GetComponent<Transform>()->SetRotation(M_PI_F / 8.0f);
 		rectangle->GetComponent<Physics>()->SetVelocity(Vector2D(0.0f, 0.0f));
-		objectManager.AddObject(*rectangle);
+		objectManager.AddObject(*rectangle);*/
 
-		rectangle = new GameObject(*objectManager.GetArchetypeByName("ControllableRectangle"));
-		objectManager.AddObject(*rectangle);
+		// Circles.
+		GameObject* circle = new GameObject(*objectManager.GetArchetypeByName("Circle"));
+		circle->GetComponent<Transform>()->SetTranslation(Vector2D(200.0f, 250.0f));
+		objectManager.AddObject(*circle);
+
+		// Controllable rectangles.
+		GameObject* controllableRectangle = new GameObject(*objectManager.GetArchetypeByName("ControllableRectangle"));
+		objectManager.AddObject(*controllableRectangle);
 
 #if 0
 		// Circles.

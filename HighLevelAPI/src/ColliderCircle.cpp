@@ -121,14 +121,6 @@ bool ColliderCircle::IsCollidingWith(const Collider& other) const
 		// Check if the other circle is intersecting the circle.
 		return CircleCircleIntersection(Circle(otherTranslation, otherCircle.GetRadius()), circle);
 	}
-	case ColliderTypeRectangle:
-	{
-		// Check if the other rectangle is intersecting the rectangle.
-		const ColliderRectangle& otherRectangle = static_cast<const ColliderRectangle&>(other);
-
-		// Check if the rectangle is intersecting the circle.
-		return RectangleCircleIntersection(BoundingRectangle(otherTranslation, otherRectangle.GetExtents()), circle);
-	}
 	}
 
 	return other.IsCollidingWith(*this);

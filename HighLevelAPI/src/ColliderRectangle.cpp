@@ -148,6 +148,24 @@ bool ColliderRectangle::IsCollidingWith(const Collider& other) const
 	// The BoundingRectangle for this collider.
 	BoundingRectangle rectangle = BoundingRectangle(transform->GetTranslation(), extents);
 
+	// Normalize the angles to within -PI/2, +PI/2
+	float angle1 = transform->GetRotation();
+
+	// Calculate whether the angles are axis-aligned (multiples of 90 degrees)
+	bool angle1AxisAligned = AlmostEqual(Loop(angle1, -M_PI_F / 4.0f, M_PI_F / 4.0f), 0.0f);
+
+	// Check if angles are +/- 90 degrees instead of 0 or 180 degrees, and rotate them if so.
+	if (!AlmostEqual(Loop(angle1, -M_PI_F / 2.0f, M_PI_F / 2.0f), 0.0f))
+	{
+		std::swap(rectangle.extents.x, rectangle.extents.y);
+		rectangle.left = rectangle.center.x - rectangle.extents.x;
+		rectangle.top = rectangle.center.y + rectangle.extents.y;
+		rectangle.right = rectangle.center.x + rectangle.extents.x;
+		rectangle.bottom = rectangle.center.y - rectangle.extents.y;
+
+		angle1 = 0.0f;
+	}
+
 	switch (other.GetType())
 	{
 	case ColliderTypePoint:
@@ -160,8 +178,16 @@ bool ColliderRectangle::IsCollidingWith(const Collider& other) const
 		// Interpret the other collider as a circle collider for ease of access.
 		const ColliderCircle& otherCircle = static_cast<const ColliderCircle&>(other);
 
-		// Check if the circle is intersecting the rectangle.
-		return RectangleCircleIntersection(rectangle, Circle(otherTranslation, otherCircle.GetRadius()));
+		if (angle1AxisAligned)
+		{
+			// Check if the circle is intersecting the rectangle.
+			return RectangleCircleIntersection(rectangle, Circle(otherTranslation, otherCircle.GetRadius()));
+		}
+		else
+		{
+			// Check if the circle is intersecting the oriented bounding box.
+			return OBBCircleIntersection(*this, Circle(otherTranslation, otherCircle.GetRadius()));
+		}
 	}
 	case ColliderTypeRectangle:
 	{
@@ -169,12 +195,9 @@ bool ColliderRectangle::IsCollidingWith(const Collider& other) const
 		const ColliderRectangle& otherRectangle = static_cast<const ColliderRectangle&>(other);
 
 		// Normalize the angles to within -PI/2, +PI/2
-
-		float angle1 = transform->GetRotation();
 		float angle2 = other.transform->GetRotation();
 
 		// Calculate whether the angles are axis-aligned (multiples of 90 degrees)
-		bool angle1AxisAligned = AlmostEqual(Loop(angle1, -M_PI_F / 4.0f, M_PI_F / 4.0f), 0.0f);
 		bool angle2AxisAligned = AlmostEqual(Loop(angle2, -M_PI_F / 4.0f, M_PI_F / 4.0f), 0.0f);
 
 		if (angle1AxisAligned && angle2AxisAligned)
@@ -182,17 +205,6 @@ bool ColliderRectangle::IsCollidingWith(const Collider& other) const
 			BoundingRectangle otherBoundingRectangle(otherTranslation, otherRectangle.GetExtents());
 
 			// Check if angles are +/- 90 degrees instead of 0 or 180 degrees, and rotate them if so.
-			if (!AlmostEqual(Loop(angle1, -M_PI_F / 2.0f, M_PI_F / 2.0f), 0.0f))
-			{
-				std::swap(rectangle.extents.x, rectangle.extents.y);
-				rectangle.left = rectangle.center.x - rectangle.extents.x;
-				rectangle.top = rectangle.center.y + rectangle.extents.y;
-				rectangle.right = rectangle.center.x + rectangle.extents.x;
-				rectangle.bottom = rectangle.center.y - rectangle.extents.y;
-
-				angle1 = 0.0f;
-			}
-
 			if (!AlmostEqual(Loop(angle2, -M_PI_F / 2.0f, M_PI_F / 2.0f), 0.0f))
 			{
 				std::swap(otherBoundingRectangle.extents.x, otherBoundingRectangle.extents.y);

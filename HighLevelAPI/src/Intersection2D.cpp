@@ -23,6 +23,11 @@
 #include "ColliderRectangle.h"
 #include "ColliderConvex.h"
 
+// Systems
+#include <DebugDraw.h>
+#include <Graphics.h>
+#include <Camera.h>
+
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -123,8 +128,8 @@ void GetOBBCorners(const ColliderRectangle& rect, Vector2D out[4])
 
 // Check whether two oriented bounding boxes intersect.
 // Params:
-//  rect1 = The first oriented bounding box.
-//	rect2 = The second oriented bounding box.
+//  rect1 = The first rectangle.
+//	rect2 = The second rectangle.
 // Returns:
 //   True if intersection, false otherwise.
 bool OBBOBBIntersection(const ColliderRectangle& rect1, const ColliderRectangle& rect2)
@@ -174,6 +179,77 @@ bool OBBOBBIntersection(const ColliderRectangle& rect1, const ColliderRectangle&
 	}
 
 	// If we reached this point, there is no gap, the OBBs are colliding.
+	return true;
+}
+
+// Check whether an oriented bounding box and a circle intersect.
+// Params:
+//  rect = The rectangle.
+//	circle = The circle.
+// Returns:
+//   True if intersection, false otherwise.
+bool OBBCircleIntersection(const ColliderRectangle& rect, const Circle& circle)
+{
+	float angle1 = rect.transform->GetRotation();
+
+	Vector2D normals[3];
+
+	// Calculate all the normals we need to check for gaps along.
+	normals[0] = Vector2D(cos(angle1), sin(angle1));
+	normals[1] = Vector2D(-normals[0].y, normals[0].x);
+	normals[2] = (circle.center - rect.transform->GetTranslation()).Normalized(); // Direction from the rectangle to the circle
+
+	DebugDraw& debugDraw = DebugDraw::GetInstance();
+	Camera& currentCamera = Graphics::GetInstance().GetCurrentCamera();
+
+	// Draw the axis lines.
+	for (unsigned i = 0; i < 3; i++)
+		debugDraw.AddLineToStrip(-400.0f * normals[i], 400.0f * normals[i], Colors::LightBlue);
+	debugDraw.EndLineStrip(currentCamera);
+
+	Vector2D points[4];
+
+	// Gather the points for the rectangle.
+	GetOBBCorners(rect, points);
+	
+	// Loop through each normal.
+	for (unsigned i = 0; i < 3; i++)
+	{
+		float minExtents = FLT_MAX;
+		float maxExtents = -FLT_MAX;
+
+		// Project the circle's center along the current axis.
+		float projectedCircleCenter = circle.center.DotProduct(normals[i]);
+
+		for (unsigned j = 0; j < 4; j++)
+		{
+			// Project the current point from the rectangle along the current axis.
+			float projectedPoint = (rect.transform->GetMatrix() * points[j]).DotProduct(normals[i]);
+
+			// Draw the point being projected along the current axis.
+			debugDraw.AddLineToStrip(rect.transform->GetMatrix() * points[j], normals[i] * projectedPoint, Colors::Yellow);
+			debugDraw.AddCircle(normals[i] * projectedPoint, 5.0f, currentCamera, Colors::Violet);
+
+			// Update the min/max extents of the rectangle.
+			maxExtents = max(maxExtents, projectedPoint);
+			minExtents = min(minExtents, projectedPoint);
+		}
+
+		// Draw the circle's points being projected along the current axis.
+		debugDraw.AddLineToStrip(circle.center, normals[i] * projectedCircleCenter, Colors::Yellow);
+		debugDraw.AddLineToStrip(circle.center - normals[i] * circle.radius, normals[i] * (projectedCircleCenter - circle.radius), Colors::Yellow);
+		debugDraw.AddLineToStrip(circle.center + normals[i] * circle.radius, normals[i] * (projectedCircleCenter + circle.radius), Colors::Yellow);
+		debugDraw.AddCircle(normals[i] * projectedCircleCenter, 5.0f, currentCamera, Colors::Violet);
+		debugDraw.AddCircle(normals[i] * (projectedCircleCenter - circle.radius), 5.0f, currentCamera, Colors::Violet);
+		debugDraw.AddCircle(normals[i] * (projectedCircleCenter + circle.radius), 5.0f, currentCamera, Colors::Violet);
+		debugDraw.EndLineStrip(currentCamera);
+
+		// If there is a gap between the min and max extents on this axis, the OBB and circle are not colliding.
+		if (maxExtents < projectedCircleCenter - circle.radius || projectedCircleCenter + circle.radius < minExtents)
+			return false;
+	}
+
+	// If we reached this point, there is no gap, the OBB and circle are colliding.
 	return true;
 }
 
