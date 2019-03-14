@@ -343,56 +343,40 @@ bool ConvexHullIntersection(const std::vector<LineSegment>& lineSegments1, const
 	float set2Min;
 	float set2Max;
 
-	// 2.) Save the vertices of both line segments
+	// 2.) Save the vertices and normals of both line segments
 	std::vector<Vector2D> vertexSet1;
 	std::vector<Vector2D> vertexSet2;
-	// Save the first set of vertices
-	vertexSet1.reserve(lineSegments1.size());
-	for (auto begin = lineSegments1.cbegin(); begin < lineSegments1.cend(); ++begin)
-	{
-		vertexSet1.push_back(begin->end);
-	}
-	// Save the second set of vertices
-	vertexSet2.reserve(lineSegments2.size());
-	for (auto begin = lineSegments2.cbegin(); begin < lineSegments2.cend(); ++begin)
-	{
-		vertexSet2.push_back(begin->end);
-	}
+	std::vector<Vector2D> normalSet;
+	unsigned totalSize = lineSegments1.size() + lineSegments2.size();
+	vertexSet1.reserve(totalSize);
+	vertexSet2.reserve(totalSize);
+	normalSet.reserve(totalSize);
 
-	// 3.) Start projecting the vertices of both polygons of into one set of axes
-	for (auto begin = lineSegments1.cbegin(); begin < lineSegments1.cend(); ++begin)
+	for (unsigned i = 0; i < totalSize; ++i)
 	{
-		// The normal from the current line segment
-		Vector2D normal = begin->normal;
-
-		ProjectPolygon(normal, vertexSet1, set1Min, set1Max);
-		ProjectPolygon(normal, vertexSet2, set2Min, set2Max);
-
-		//If there is a gap in the projection of the vertices on the axis, then stop using this set of axes as we
-		// found that there is no collision; return false
-		if (set1Max < set2Min || set2Max < set1Min)
+		if (i < lineSegments1.size())
 		{
-			return false;
+			vertexSet1.push_back(lineSegments1[i].end);
+			for (unsigned j = 0; j < i; ++j)
+			{
+				if (lineSegments1[i].normal.DotProduct(normalSet[j]) == 0)
+					continue;
+			}
+			normalSet.push_back(lineSegments1[i].normal);
+		}
+		else
+		{
+			vertexSet2.push_back(lineSegments2[i - lineSegments1.size()].end);
+			for (unsigned j = i - lineSegments1.size(); j < normalSet.size(); ++j)
+			{
+				if (lineSegments2[i - lineSegments1.size()].normal.DotProduct(normalSet[j]) == 0)
+					continue;
+			}
+			normalSet.push_back(lineSegments2[i - lineSegments1.size()].normal);
 		}
 	}
 
-	// 4.) Start projection the vertices of both polygons into the other set of axes
-	for (auto begin = lineSegments2.cbegin(); begin < lineSegments2.cend(); ++begin)
-	{
-		// The normal from the current line segment
-		Vector2D normal = begin->normal;
-		ProjectPolygon(normal, vertexSet1, set1Min, set1Max);
-		ProjectPolygon(normal, vertexSet2, set2Min, set2Max);
-		//If there is a gap in the projection of the vertices on the axis, then stop using this set of axes as we
-		// found that there is no collision; return false
-		if (set1Max < set2Min || set2Max < set1Min)
-		{
-			return false;
-		}
-	}
-
-	// 5.) There are no other conditions to be met, there is a collision
-	return true;
+	return SATIntersection(normalSet.data(), normalSet.size(), vertexSet1.data(), vertexSet1.size(), vertexSet2.data(), vertexSet2.size());
 }
 
 // Check whether a convex polygon interacts with a rectangle collider
@@ -403,30 +387,27 @@ bool ConvexHullToOBBIntersection(const std::vector<LineSegment>& convexSegments,
 {
 	// Create the line segments so that they are rotated but not scaled
 	// The horizontal end is the same as the vertical side's start
-	Vector2D horizontalStart(-extents.x, extents.y);
-	Vector2D horizontalEnd(extents);
-	Vector2D verticalEnd(extents.x, -extents.y);
+	Vector2D topLeft(-extents.x, extents.y);
+	Vector2D topRight(extents);
+	Vector2D bottomRight(extents.x, -extents.y);
+	Vector2D bottomLeft(-extents);
 
 	// Transform the vertices by the rotation but also scale them back
-	horizontalStart = rectTransform.GetMatrix() * horizontalStart;
-	horizontalEnd = rectTransform.GetMatrix() * horizontalEnd;
-	verticalEnd = rectTransform.GetMatrix() * verticalEnd;
-
-	const Vector2D& transformScale = rectTransform.GetScale();
-
-	horizontalStart.x /= transformScale.x;
-	horizontalStart.y /= transformScale.y;
-	horizontalEnd.x /= transformScale.x;
-	horizontalEnd.y /= transformScale.y;
-	verticalEnd.x /= transformScale.x;
-	verticalEnd.y /= transformScale.y;
+	Vector2D translation = rectTransform.GetTranslation();
+	Matrix2D matrix = Matrix2D::RotationMatrixRadians(rectTransform.GetRotation()) * Matrix2D::TranslationMatrix(translation.x, translation.y);
+	topLeft = matrix * topLeft;
+	topRight = matrix * topRight;
+	bottomRight = matrix * bottomRight;
+	bottomLeft = matrix * bottomLeft;
 
 	// Construct a convex hull out of the extents of the circle
 	std::vector<LineSegment> extentSegments;
 	// Because a rectangle has two pairs of parallel sides, then we only need to check for those two sides, lol.
-	extentSegments.reserve(2);
-	extentSegments.push_back(LineSegment(horizontalStart, horizontalEnd));
-	extentSegments.push_back(LineSegment(horizontalEnd, verticalEnd));
+	extentSegments.reserve(4);
+	extentSegments.push_back(LineSegment(topLeft, topRight));
+	extentSegments.push_back(LineSegment(topRight, bottomRight));
+	extentSegments.push_back(LineSegment(bottomRight, bottomLeft));
+	extentSegments.push_back(LineSegment(bottomLeft, topLeft));
 	// Finally create the 
 	// Then, just use the convex hull collision detection algorithm already written
 	return ConvexHullIntersection(convexSegments, extentSegments);

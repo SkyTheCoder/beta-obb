@@ -75,16 +75,19 @@ namespace Levels
 		// Get the resource manager
 		ResourceManager& resourceManager = GetSpace()->GetResourceManager();
 
-		GameObject* convex = Archetypes::CreateConvexObject1(resourceManager.GetMesh("Quad"), resourceManager.GetSpriteSource("Odd_Diamond.png"));
-		GameObject* followedConvex = Archetypes::CreateConvexObject2(resourceManager.GetMesh("Quad"), resourceManager.GetSpriteSource("Hexagon.png"));
+		//GameObject* convex = Archetypes::CreateConvexObject1(resourceManager.GetMesh("Quad"), resourceManager.GetSpriteSource("Odd_Diamond.png"));
+		//GameObject* followedConvex = Archetypes::CreateConvexObject2(resourceManager.GetMesh("Quad"), resourceManager.GetSpriteSource("Hexagon.png"));
 		// Create the convex object
-		//GameObject* convex = GameObjectFactory::GetInstance().CreateObject("Convex1", resourceManager.GetMesh("Quad"), resourceManager.GetSpriteSource("Odd_Diamond.png"));
-		//GameObject* followedConvex = GameObjectFactory::GetInstance().CreateObject("Convex2", resourceManager.GetMesh("Quad"), resourceManager.GetSpriteSource("Hexagon.png"));
+		GameObject* convex = GameObjectFactory::GetInstance().CreateObject("Convex1", resourceManager.GetMesh("Quad"), resourceManager.GetSpriteSource("Odd_Diamond.png"));
+		GameObject* followedConvex = GameObjectFactory::GetInstance().CreateObject("Convex2", resourceManager.GetMesh("Quad"), resourceManager.GetSpriteSource("Hexagon.png"));
+		GameObject* rectangle = GameObjectFactory::GetInstance().CreateObject("Rectangle", resourceManager.GetMesh("Quad"));
+		rectangle->GetComponent<Transform>()->SetTranslation(Vector2D(200, 0));
 
 		followedConvex->AddComponent(new Behaviors::MouseFollow);
 
 		GetSpace()->GetObjectManager().AddObject(*convex);
 		GetSpace()->GetObjectManager().AddObject(*followedConvex);
+		GetSpace()->GetObjectManager().AddObject(*rectangle);
 	}
 
 	// Update Level 3.

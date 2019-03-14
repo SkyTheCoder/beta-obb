@@ -301,12 +301,12 @@ namespace Archetypes
 		sprite->SetSpriteSource(source);
 
 		LineSegment segments[6] = {
-			LineSegment(Vector2D(-0.25f, 0.25f), Vector2D(0.f, .5f)),
-			LineSegment(Vector2D(0.f, 0.5f), Vector2D(0.25f, 0.25f)),
-			LineSegment(Vector2D(0.25f, 0.25f), Vector2D(0.25f, -.25f)),
-			LineSegment(Vector2D(0.25f, -.25f), Vector2D(0.f, -.5f)),
-			LineSegment(Vector2D(0.f, -.5f), Vector2D(-0.25f, -.25f)),
-			LineSegment(Vector2D(-0.25f, -.25f), Vector2D(-0.25f, 0.25f)),
+			LineSegment(Vector2D(-0.25f, 0.25f), Vector2D(-0.25f, -.25f)),
+			LineSegment(Vector2D(-0.25f, -.25f), Vector2D(0.f, -.5f)),
+			LineSegment(Vector2D(0.f, -.5f), Vector2D(0.25f, -.25f)),
+			LineSegment(Vector2D(0.25f, -.25f), Vector2D(0.25f, 0.25f)),
+			LineSegment(Vector2D(0.25f, 0.25f), Vector2D(0.f, 0.5f)),
+			LineSegment(Vector2D(0.f, .5f) , Vector2D(-0.25f, 0.25f)),
 		};
 
 		ColliderConvex* collider = new ColliderConvex(segments, 6);
