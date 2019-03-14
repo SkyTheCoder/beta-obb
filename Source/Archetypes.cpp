@@ -35,11 +35,13 @@
 #include "ColliderPoint.h"
 #include "ColliderCircle.h"
 #include "ColliderRectangle.h"
+#include "ColliderConvex.h"
 #include "ColorChange.h"
 #include "ScreenWrap.h"
 #include "SpriteTilemap.h"
 #include "ColliderTilemap.h"
 #include "MonkeyAnimation.h"
+#include "Shapes2D.h"
 
 //------------------------------------------------------------------------------
 
@@ -260,6 +262,57 @@ namespace Archetypes
 		GameObjectFactory::GetInstance().SaveObjectToFile(rectangle);
 
 		return rectangle;
+	}
+
+	GameObject* CreateConvexObject1(Mesh* mesh)
+	{
+		GameObject* convex = new GameObject("Convex1");
+		Transform* transform = new Transform(Vector2D(-200, 0), Vector2D(300, 300));
+		Sprite* sprite = new Sprite;
+		sprite->SetMesh(mesh);
+		
+		LineSegment segments[5] = {
+			LineSegment(Vector2D(0.f, 0.5f), Vector2D(-0.5f, 0.f)),
+			LineSegment(Vector2D(-0.5f, 0.0f), Vector2D(-0.25f, -0.25f)),
+			LineSegment(Vector2D(-0.25f, -0.25f), Vector2D(0.25f, -0.25f)),
+			LineSegment(Vector2D(0.25f, -0.25f), Vector2D(0.5f, 0.f)),
+			LineSegment(Vector2D(0.5f, 0.f), Vector2D(0.f, 0.5f)),
+		};
+
+		ColliderConvex* collider = new ColliderConvex(segments, 5);
+
+		convex->AddComponent(transform);
+		convex->AddComponent(sprite);
+		convex->AddComponent(collider);
+		convex->AddComponent(new Behaviors::ColorChange(Colors::Blue, Colors::Red));
+
+		return convex;
+	}
+
+	GameObject* CreateConvexObject2(Mesh* mesh)
+	{
+		GameObject* convex = new GameObject("Convex2");
+		Transform* transform = new Transform(Vector2D(-200, 0), Vector2D(300, 300));
+		Sprite* sprite = new Sprite;
+		sprite->SetMesh(mesh);
+
+		LineSegment segments[6] = {
+			LineSegment(Vector2D(-0.25f, 0.25f), Vector2D(0.f, .5f)),
+			LineSegment(Vector2D(0.f, 0.5f), Vector2D(0.25f, 0.25f)),
+			LineSegment(Vector2D(0.25f, 0.25f), Vector2D(0.25f, -.25f)),
+			LineSegment(Vector2D(0.25f, -.25f), Vector2D(0.f, -.5f)),
+			LineSegment(Vector2D(0.f, -.5f), Vector2D(-0.25f, -.25f)),
+			LineSegment(Vector2D(-0.25f, -.25f), Vector2D(-0.25f, 0.25f)),
+		};
+
+		ColliderConvex* collider = new ColliderConvex(segments, 6);
+
+		convex->AddComponent(transform);
+		convex->AddComponent(sprite);
+		convex->AddComponent(collider);
+		convex->AddComponent(new Behaviors::ColorChange(Colors::Blue, Colors::Red));
+
+		return convex;
 	}
 
 	// Create a tilemap object

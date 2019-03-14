@@ -29,6 +29,12 @@
 //------------------------------------------------------------------------------
 // Public Class Member Functions
 //------------------------------------------------------------------------------
+ColliderConvex::ColliderConvex()
+	: Collider(ColliderType::ColliderTypeConvex)
+{
+
+}
+
 ColliderConvex::ColliderConvex(const std::vector<LineSegment>& localPoints_)
 	: Collider(ColliderType::ColliderTypeConvex), localPoints()
 {
@@ -72,8 +78,9 @@ void ColliderConvex::Draw()
 	DebugDraw& debug = DebugDraw::GetInstance();
 	Graphics& graphics = Graphics::GetInstance();
 	// Iterate through every point in the convex shape
-	auto begin = localPoints.cbegin();
-	for (; begin < localPoints.cend(); ++begin)
+	std::vector<LineSegment> transformed = GetLineSegments();
+	auto begin = transformed.cbegin();
+	for (; begin < transformed.cend(); ++begin)
 	{
 		// Draw a line between the current point and the next in green
 		debug.AddLineToStrip(begin->start, begin->end, Colors::Green);
@@ -105,6 +112,11 @@ bool ColliderConvex::IsCollidingWith(const Collider& other) const
 	default:
 		return false;
 	}
+}
+
+void ColliderConvex::AddSide(const LineSegment& segment)
+{
+	localPoints.push_back(LineSegment(segment));
 }
 
 const std::vector<LineSegment>& ColliderConvex::GetLocalLineSegments() const

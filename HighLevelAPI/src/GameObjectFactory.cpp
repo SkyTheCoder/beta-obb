@@ -31,6 +31,7 @@
 #include "ColliderRectangle.h"
 #include "ColliderTilemap.h"
 #include "ColliderLine.h"
+#include "ColliderConvex.h"
 #include "Transform.h"
 #include "Animation.h"
 #include "Sprite.h"
@@ -142,6 +143,7 @@ GameObjectFactory::GameObjectFactory()
 	RegisterComponent<ColliderRectangle>();
 	RegisterComponent<ColliderTilemap>();
 	RegisterComponent<ColliderLine>();
+	RegisterComponent<ColliderConvex>();
 	RegisterComponent<Transform>();
 	RegisterComponent<Animation>();
 	RegisterComponent<Sprite>();

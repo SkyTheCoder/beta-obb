@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	Level2.cpp
+// File Name:	Level1.cpp
 // Author(s):	David Cohen (david.cohen)
 // Project:		BetaFramework
 // Course:		WANIC VGP2 2018-2019
@@ -15,7 +15,10 @@
 
 #include "stdafx.h"
 
-#include "Level2.h"
+#include "Level1.h"
+
+// Archetypes
+#include "Archetypes.h"
 
 // Systems
 #include <Texture.h>
@@ -32,10 +35,10 @@
 #include "MeshHelper.h"
 #include "Transform.h"
 #include "Physics.h"
+#include "MouseFollow.h"
 
 // Levels
-#include "Level1.h"
-// David Wong: Added the third level
+#include "Level2.h"
 #include "Level3.h"
 
 //------------------------------------------------------------------------------
@@ -50,52 +53,39 @@ namespace Levels
 	// Public Functions:
 	//------------------------------------------------------------------------------
 
-	// Creates an instance of Level 2.
-	Level2::Level2() : Level("Level2"),
-		circleSpeed(0.0f), pointSpeed(0.0f)
+	// Creates an instance of Level 3.
+	Level3::Level3() : Level("Level3")
 	{
 	}
 
-	// Load the resources associated with Level 2.
-	void Level2::Load()
+	// Load the resources associated with Level 3.
+	void Level3::Load()
 	{
-		GameObjectFactory& objectFactory = GameObjectFactory::GetInstance();
-		GameObjectManager& objectManager = GetSpace()->GetObjectManager();
+		ResourceManager& resourceManager = GetSpace()->GetResourceManager();
+		// Create the quad mesh
+		resourceManager.GetMesh("Quad");
+	}
+
+	// Initialize the memory associated with Level 3.
+	void Level3::Initialize()
+	{
+		// Get the resource manager
 		ResourceManager& resourceManager = GetSpace()->GetResourceManager();
 
-		// Create a new quad mesh for the sprite.
-		resourceManager.GetMesh("Quad");
+		// Create the convex object
+		GameObject* convex = Archetypes::CreateConvexObject1(resourceManager.GetMesh("Quad"));
+		GameObject* followedConvex = Archetypes::CreateConvexObject2(resourceManager.GetMesh("Quad"));
 
-		// Load the circle texture and sprite source.
-		resourceManager.GetSpriteSource("Circle.png");
+		followedConvex->AddComponent(new Behaviors::MouseFollow);
 
-		// Load the archetypes from their files.
-		objectManager.AddArchetype(*objectFactory.CreateObject("Rectangle", resourceManager.GetMesh("Quad")));
-		objectManager.AddArchetype(*objectFactory.CreateObject("Circle", resourceManager.GetMesh("Quad"), resourceManager.GetSpriteSource("Circle.png")));
-		objectManager.AddArchetype(*objectFactory.CreateObject("ControllableRectangle", resourceManager.GetMesh("Quad")));
+		GetSpace()->GetObjectManager().AddObject(*convex);
+		GetSpace()->GetObjectManager().AddObject(*followedConvex);
 	}
 
-	// Initialize the memory associated with Level 2.
-	void Level2::Initialize()
-	{
-		GameObjectManager& objectManager = GetSpace()->GetObjectManager();
-
-		// Add various physics objects to the scene.
-
-		// Circles.
-		GameObject* circle = new GameObject(*objectManager.GetArchetypeByName("Circle"));
-		circle->GetComponent<Transform>()->SetTranslation(Vector2D(100.0f, 100.0f));
-		objectManager.AddObject(*circle);
-
-		// Controllable rectangles.
-		GameObject* controllableRectangle = new GameObject(*objectManager.GetArchetypeByName("ControllableRectangle"));
-		objectManager.AddObject(*controllableRectangle);
-	}
-
-	// Update Level 2.
+	// Update Level 3.
 	// Params:
 	//	 dt = Change in time (in seconds) since the last game loop.
-	void Level2::Update(float dt)
+	void Level3::Update(float dt)
 	{
 		UNREFERENCED_PARAMETER(dt);
 
@@ -104,21 +94,20 @@ namespace Levels
 		// Handle level switching.
 		if (input.CheckTriggered('1'))
 		{
-			GetSpace()->SetLevel<Level1>();
+			GetSpace()->SetLevel<Level3>();
 		}
 		else if (input.CheckTriggered('2'))
 		{
-			GetSpace()->RestartLevel();
+			GetSpace()->SetLevel<Level2>();
 		}
-		// David Wong: Added the third level
 		else if (input.CheckTriggered('3'))
 		{
-			GetSpace()->SetLevel<Level3>();
+			GetSpace()->RestartLevel();
 		}
 	}
 
-	// Unload the resources associated with Level 2.
-	void Level2::Unload()
+	// Unload the resources associated with Level 3.
+	void Level3::Unload()
 	{
 	}
 }

@@ -39,6 +39,9 @@ public:
 	// Public Functions
 	//------------------------------------------------------------------------------
 
+	// Constructs an emptpy convex polygon collider
+	ColliderConvex();
+
 	// Constructs a convex polygon colllider
 	// Params:
 	//	localPoints: The points of the convex polygon in relation to the center of it
@@ -67,6 +70,12 @@ public:
 
 	// Debug Draw of the Collider
 	void Draw() override;
+	
+	// Adds a line segment to the collider, assuming it keeps the collider a convex shape
+	// if the collider's shape is not a convex, then the collision detection will not be accurate
+	// Params:
+	//	segment: The line segment
+	void AddSide(const LineSegment& segment);
 
 	// Check for a collision between a convex polygon and another collider
 	// Params:

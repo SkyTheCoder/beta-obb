@@ -80,6 +80,20 @@ namespace Archetypes
 	// Returns:
 	//	 A pointer to the newly constructed game object
 	GameObject* CreateRectangle(Mesh* mesh);
+
+	// Creates a convex polygon
+	// Params:
+	//   mesh: The mesh of the game object
+	// Returns:
+	//  A pointer to the to constructed game object
+	GameObject* CreateConvexObject1(Mesh* mesh);
+
+	// Creates a convex polygon
+	// Params:
+	//   mesh: The mesh of the game object
+	// Returns:
+	//  A pointer to the to constructed game object
+	GameObject* CreateConvexObject2(Mesh* mesh);
 	
 	// Create a tilemap object
 	// Params:

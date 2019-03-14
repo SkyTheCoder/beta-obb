@@ -261,9 +261,14 @@ bool OBBCircleIntersection(const ColliderRectangle& rect, const Circle& circle)
 //	max: The maximum value of the polygon as a result of projection it into the normal
 void ProjectPolygon(const Vector2D& normal, const std::vector<Vector2D>& vertices, float& minValue, float& maxValue)
 {
+	// Debug draw information for every projection
+	DebugDraw& debug = DebugDraw::GetInstance();
+	Camera& currentCamera = Graphics::GetInstance().GetCurrentCamera();
 	// Get the minimum and maximum projetions of the first polygon in the line
-	minValue = -std::numeric_limits<float>::lowest();
-	maxValue = std::numeric_limits<float>::lowest();
+	minValue = FLT_MAX;
+	maxValue = FLT_MIN;
+	// Draw the normal
+	debug.AddLineToStrip(-normal * 800, normal * 800, Colors::Red);
 	// Project the vertex into the normal and save the edges of the first projecte polygon into the line
 	// minimum and maximum
 	for (auto vertex = vertices.cbegin(); vertex < vertices.cend(); ++vertex)
@@ -272,6 +277,9 @@ void ProjectPolygon(const Vector2D& normal, const std::vector<Vector2D>& vertice
 		minValue = min(minValue, projection);
 		maxValue = max(maxValue, projection);
 	}
+	debug.AddCircle(normal * minValue, 10, currentCamera, Colors::Yellow);
+	debug.AddCircle(normal * maxValue, 10, currentCamera, Colors::Yellow);
+	
 }
 
 // Check whether two convex polygons interact
@@ -282,6 +290,10 @@ void ProjectPolygon(const Vector2D& normal, const std::vector<Vector2D>& vertice
 //	True if intersection, false otherwise
 bool ConvexHullIntersection(const ColliderConvex& polygon1, const ColliderConvex& polygon2)
 {
+	// Get debug draw information
+	DebugDraw& debug = DebugDraw::GetInstance();
+	Camera& camera = Graphics::GetInstance().GetCurrentCamera();
+
 	// 1.) Get the list of line segments from each polygon
 	const std::vector<LineSegment> lineSegments1 = polygon1.GetLineSegments();
 	const std::vector<LineSegment> lineSegments2 = polygon2.GetLineSegments();
@@ -298,14 +310,12 @@ bool ConvexHullIntersection(const ColliderConvex& polygon1, const ColliderConvex
 	std::vector<Vector2D> vertexSet2;
 	// Save the first set of vertices
 	vertexSet1.reserve(lineSegments1.size());
-	vertexSet1.push_back(lineSegments1.begin()->start);
 	for (auto begin = lineSegments1.cbegin(); begin < lineSegments1.cend(); ++begin)
 	{
 		vertexSet1.push_back(begin->end);
 	}
 	// Save the second set of vertices
 	vertexSet2.reserve(lineSegments2.size());
-	vertexSet2.push_back(lineSegments2.begin()->start);
 	for (auto begin = lineSegments2.cbegin(); begin < lineSegments2.cend(); ++begin)
 	{
 		vertexSet2.push_back(begin->end);
@@ -316,12 +326,16 @@ bool ConvexHullIntersection(const ColliderConvex& polygon1, const ColliderConvex
 	{
 		// The normal from the current line segment
 		Vector2D normal = begin->normal;
+		//debug.AddLineToStrip(-normal * 800, normal * 800, Colors::Green);
+
 		ProjectPolygon(normal, vertexSet1, set1Min, set1Max);
 		ProjectPolygon(normal, vertexSet2, set2Min, set2Max);
+
 		//If there is a gap in the projection of the vertices on the axis, then stop using this set of axes as we
 		// found that there is no collision; return false
-		if (set1Max < set2Min || set2Max > set1Min)
+		if (set1Max < set2Min || set2Max < set1Min)
 		{
+			std::cout << "No collision" << std::endl;
 			return false;
 		}
 	}
@@ -337,10 +351,13 @@ bool ConvexHullIntersection(const ColliderConvex& polygon1, const ColliderConvex
 		// found that there is no collision; return false
 		if (set1Max < set2Min || set2Max < set1Min)
 		{
+			std::cout << "No collision" << std::endl;
 			return false;
 		}
 	}
+
 	// 5.) There are no other conditions to be met, there is a collision
+	std::cout << "Colliding Polygons" << std::endl;
 	return true;
 }
 
