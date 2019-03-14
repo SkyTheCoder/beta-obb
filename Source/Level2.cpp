@@ -37,6 +37,8 @@
 #include "Level1.h"
 // David Wong: Added the third level
 #include "Level3.h"
+#include "Level4.h"
+#include "Level5.h"
 
 //------------------------------------------------------------------------------
 
@@ -119,6 +121,14 @@ namespace Levels
 		else if (input.CheckTriggered('3'))
 		{
 			GetSpace()->SetLevel<Level3>();
+		}
+		else if (input.CheckTriggered('4'))
+		{
+			GetSpace()->SetLevel<Level4>();
+		}
+		else if (input.CheckTriggered('5'))
+		{
+			GetSpace()->SetLevel<Level5>();
 		}
 	}
 

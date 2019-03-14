@@ -58,6 +58,12 @@
     <ClCompile Include="Source\Level3.cpp">
       <Filter>Game\Levels</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Level4.cpp">
+      <Filter>Game\Levels</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Level5.cpp">
+      <Filter>Game\Levels</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\stdafx.h">
@@ -100,6 +106,12 @@
       <Filter>Game\Levels</Filter>
     </ClInclude>
     <ClInclude Include="Source\Level3.h">
+      <Filter>Game\Levels</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Level4.h">
+      <Filter>Game\Levels</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Level5.h">
       <Filter>Game\Levels</Filter>
     </ClInclude>
   </ItemGroup>

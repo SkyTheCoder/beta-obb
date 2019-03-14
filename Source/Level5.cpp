@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	Level1.cpp
+// File Name:	Level5.cpp
 // Author(s):	David Cohen (david.cohen)
 // Project:		BetaFramework
 // Course:		WANIC VGP2 2018-2019
@@ -15,7 +15,7 @@
 
 #include "stdafx.h"
 
-#include "Level1.h"
+#include "Level5.h"
 
 // Systems
 #include <Texture.h>
@@ -34,11 +34,10 @@
 #include "Physics.h"
 
 // Levels
+#include "Level1.h"
 #include "Level2.h"
-// David Wong: Added the third level
 #include "Level3.h"
 #include "Level4.h"
-#include "Level5.h"
 
 //------------------------------------------------------------------------------
 
@@ -52,14 +51,13 @@ namespace Levels
 	// Public Functions:
 	//------------------------------------------------------------------------------
 
-	// Creates an instance of Level 1.
-	Level1::Level1() : Level("Level1"),
-		circleSpeed(0.0f), pointSpeed(0.0f)
+	// Creates an instance of Level 5.
+	Level5::Level5() : Level("Level5")
 	{
 	}
 
-	// Load the resources associated with Level 1.
-	void Level1::Load()
+	// Load the resources associated with Level 5.
+	void Level5::Load()
 	{
 		GameObjectFactory& objectFactory = GameObjectFactory::GetInstance();
 		GameObjectManager& objectManager = GetSpace()->GetObjectManager();
@@ -68,41 +66,35 @@ namespace Levels
 		// Create a new quad mesh for the sprite.
 		resourceManager.GetMesh("Quad");
 
+		// Load the circle texture and sprite source.
+		resourceManager.GetSpriteSource("Circle.png");
+
 		// Load the archetypes from their files.
-		objectManager.AddArchetype(*objectFactory.CreateObject("Rectangle", resourceManager.GetMesh("Quad")));
+		objectManager.AddArchetype(*objectFactory.CreateObject("Circle", resourceManager.GetMesh("Quad"), resourceManager.GetSpriteSource("Circle.png")));
 		objectManager.AddArchetype(*objectFactory.CreateObject("ControllableRectangle", resourceManager.GetMesh("Quad")));
 	}
 
-	// Initialize the memory associated with Level 1.
-	void Level1::Initialize()
+	// Initialize the memory associated with Level 5.
+	void Level5::Initialize()
 	{
 		GameObjectManager& objectManager = GetSpace()->GetObjectManager();
 
 		// Add various physics objects to the scene.
 
 		// Rectangles.
-		GameObject* rectangle = new GameObject(*objectManager.GetArchetypeByName("Rectangle"));
-		rectangle->GetComponent<Transform>()->SetTranslation(Vector2D(-200.0f, 250.0f));
-		rectangle->GetComponent<Transform>()->SetRotation(-M_PI_F / 8.0f);
-		rectangle->GetComponent<Physics>()->SetVelocity(Vector2D(50.0f, -75.0f));
-		rectangle->GetComponent<Physics>()->SetAngularVelocity(M_PI_F / 2.0f);
-		objectManager.AddObject(*rectangle);
-
-		rectangle = new GameObject(*objectManager.GetArchetypeByName("Rectangle"));
-		rectangle->GetComponent<Transform>()->SetTranslation(Vector2D(50.0f, -150.0f));
-		rectangle->GetComponent<Transform>()->SetRotation(M_PI_F / 8.0f);
-		rectangle->GetComponent<Physics>()->SetVelocity(Vector2D(0.0f, 0.0f));
-		objectManager.AddObject(*rectangle);
+		GameObject* circle = new GameObject(*objectManager.GetArchetypeByName("Circle"));
+		circle->GetComponent<Transform>()->SetTranslation(Vector2D(150.0f, -100.0f));
+		objectManager.AddObject(*circle);
 
 		// Controllable rectangles.
 		GameObject* controllableRectangle = new GameObject(*objectManager.GetArchetypeByName("ControllableRectangle"));
 		objectManager.AddObject(*controllableRectangle);
 	}
 
-	// Update Level 1.
+	// Update Level 5.
 	// Params:
 	//	 dt = Change in time (in seconds) since the last game loop.
-	void Level1::Update(float dt)
+	void Level5::Update(float dt)
 	{
 		UNREFERENCED_PARAMETER(dt);
 
@@ -111,13 +103,12 @@ namespace Levels
 		// Handle level switching.
 		if (input.CheckTriggered('1'))
 		{
-			GetSpace()->RestartLevel();
+			GetSpace()->SetLevel<Level1>();
 		}
 		else if (input.CheckTriggered('2'))
 		{
 			GetSpace()->SetLevel<Level2>();
 		}
-		// David Wong: Added the third level
 		else if (input.CheckTriggered('3'))
 		{
 			GetSpace()->SetLevel<Level3>();
@@ -128,12 +119,12 @@ namespace Levels
 		}
 		else if (input.CheckTriggered('5'))
 		{
-			GetSpace()->SetLevel<Level5>();
+			GetSpace()->RestartLevel();
 		}
 	}
 
-	// Unload the resources associated with Level 1.
-	void Level1::Unload()
+	// Unload the resources associated with Level 5.
+	void Level5::Unload()
 	{
 	}
 }

@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	Level1.cpp
-// Author(s):	David Cohen (david.cohen)
+// File Name:	Level3.cpp
+// Author(s):	David Wong (david.wongcascante)
 // Project:		BetaFramework
 // Course:		WANIC VGP2 2018-2019
 //
@@ -15,7 +15,7 @@
 
 #include "stdafx.h"
 
-#include "Level1.h"
+#include "Level3.h"
 
 // Archetypes
 #include "Archetypes.h"
@@ -38,8 +38,10 @@
 #include "MouseFollow.h"
 
 // Levels
+#include "Level1.h"
 #include "Level2.h"
-#include "Level3.h"
+#include "Level4.h"
+#include "Level5.h"
 
 //------------------------------------------------------------------------------
 
@@ -122,6 +124,14 @@ namespace Levels
 		else if (input.CheckTriggered('3'))
 		{
 			GetSpace()->RestartLevel();
+		}
+		else if (input.CheckTriggered('4'))
+		{
+			GetSpace()->SetLevel<Level4>();
+		}
+		else if (input.CheckTriggered('5'))
+		{
+			GetSpace()->SetLevel<Level5>();
 		}
 	}
 

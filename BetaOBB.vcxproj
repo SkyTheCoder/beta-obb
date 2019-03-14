@@ -112,6 +112,8 @@ xcopy fmod\lib\fmodstudio64.dll "$(OutDir)" /Y</Command>
     <ClCompile Include="Source\Level1.cpp" />
     <ClCompile Include="Source\Level2.cpp" />
     <ClCompile Include="Source\Level3.cpp" />
+    <ClCompile Include="Source\Level4.cpp" />
+    <ClCompile Include="Source\Level5.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\MonkeyAnimation.cpp" />
     <ClCompile Include="Source\MonkeyMovement.cpp" />
@@ -132,6 +134,8 @@ xcopy fmod\lib\fmodstudio64.dll "$(OutDir)" /Y</Command>
     <ClInclude Include="Source\Level1.h" />
     <ClInclude Include="Source\Level2.h" />
     <ClInclude Include="Source\Level3.h" />
+    <ClInclude Include="Source\Level4.h" />
+    <ClInclude Include="Source\Level5.h" />
     <ClInclude Include="Source\MonkeyAnimation.h" />
     <ClInclude Include="Source\MonkeyMovement.h" />
     <ClInclude Include="Source\MouseFollow.h" />
