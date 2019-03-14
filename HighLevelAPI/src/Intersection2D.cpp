@@ -122,17 +122,20 @@ bool SATIntersection(const Vector2D* axes, unsigned axesSize, const Vector2D* po
 	DebugDraw& debugDraw = DebugDraw::GetInstance();
 	Camera& currentCamera = Graphics::GetInstance().GetCurrentCamera();
 	
-	// Loop through each normal.
+	// Draw the axes' lines.
+	for (unsigned i = 0; i < axesSize; i++)
+	{
+		debugDraw.AddLineToStrip(-400.0f * axes[i], 400.0f * axes[i], Colors::LightBlue);
+	}
+	debugDraw.EndLineStrip(currentCamera);
+
+	// Loop through each axis.
 	for (unsigned i = 0; i < axesSize; i++)
 	{
 		float minExtents1 = FLT_MAX;
 		float maxExtents1 = -FLT_MAX;
 		float minExtents2 = FLT_MAX;
 		float maxExtents2 = -FLT_MAX;
-
-		// Draw the axis line.
-		debugDraw.AddLineToStrip(-400.0f * axes[i], 400.0f * axes[i], Colors::LightBlue);
-		debugDraw.EndLineStrip(currentCamera);
 
 		for (unsigned j = 0; j < points1Size; j++)
 		{
@@ -141,7 +144,7 @@ bool SATIntersection(const Vector2D* axes, unsigned axesSize, const Vector2D* po
 			
 			// Draw the point being projected along the current axis.
 			debugDraw.AddLineToStrip(points1[j], axes[i] * projectedPoint, Colors::Yellow);
-			debugDraw.AddCircle(axes[i] * projectedPoint, 5.0f, currentCamera, Colors::Violet);
+			debugDraw.AddCircle(axes[i] * projectedPoint, 4.0f, currentCamera, Colors::Violet);
 
 			// Update the min/max extents of each convex hull.
 			maxExtents1 = max(maxExtents1, projectedPoint);
@@ -155,9 +158,9 @@ bool SATIntersection(const Vector2D* axes, unsigned axesSize, const Vector2D* po
 
 			// Draw the point being projected along the current axis.
 			debugDraw.AddLineToStrip(points2[j] - axes[i] * points2Offset, axes[i] * (projectedPoint - points2Offset), Colors::Yellow);
-			debugDraw.AddCircle(axes[i] * (projectedPoint - points2Offset), 5.0f, currentCamera, Colors::Violet);
+			debugDraw.AddCircle(axes[i] * (projectedPoint - points2Offset), 4.0f, currentCamera, Colors::Violet);
 			debugDraw.AddLineToStrip(points2[j] + axes[i] * points2Offset, axes[i] * (projectedPoint + points2Offset), Colors::Yellow);
-			debugDraw.AddCircle(axes[i] * (projectedPoint + points2Offset), 5.0f, currentCamera, Colors::Violet);
+			debugDraw.AddCircle(axes[i] * (projectedPoint + points2Offset), 4.0f, currentCamera, Colors::Violet);
 
 			// Update the min/max extents of each convex hull.
 			maxExtents2 = max(maxExtents2, projectedPoint);
@@ -166,9 +169,28 @@ bool SATIntersection(const Vector2D* axes, unsigned axesSize, const Vector2D* po
 
 		debugDraw.EndLineStrip(currentCamera);
 
+		float gap1 = (minExtents2 - points2Offset) - maxExtents1;
+		float gap2 = minExtents1 - (maxExtents2 + points2Offset);
+		float gap = max(gap1, gap2);
+
 		// If there is a gap between the min and max extents on this axis, the convex hulls are not colliding.
-		if (maxExtents1 < (minExtents2 - points2Offset) || (maxExtents2 + points2Offset) < minExtents1)
+		if (gap > 0)
+		{
+			if (gap1 > gap2)
+			{
+				debugDraw.AddLineToStrip(maxExtents1 * axes[i], (maxExtents1 + gap) * axes[i], Colors::Red);
+			}
+			else
+			{
+				debugDraw.AddLineToStrip((maxExtents2 + points2Offset) * axes[i], ((maxExtents2 + points2Offset) + gap) * axes[i], Colors::Red);
+			}
+			debugDraw.EndLineStrip(currentCamera);
 			return false;
+		}
+
+		// If there is a gap between the min and max extents on this axis, the convex hulls are not colliding.
+		//if (maxExtents1 < (minExtents2 - points2Offset) || (maxExtents2 + points2Offset) < minExtents1)
+		//	return false;
 	}
 
 	// If we reached this point, there is no gap, the OBBs are colliding.

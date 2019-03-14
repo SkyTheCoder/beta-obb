@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	Level3.h
-// Author(s):	David Wong (david.wongcascante)
+// File Name:	Level4.h
+// Author(s):	David Cohen (david.cohen)
 // Project:		BetaFramework
 // Course:		WANIC VGP2 2018-2019
 //
@@ -20,50 +20,34 @@
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-// Forward References:
-//------------------------------------------------------------------------------
-
-class Texture;
-class SpriteSource;
-class Mesh;
-class SpriteSource;
-class GameObject;
-
-//------------------------------------------------------------------------------
 // Public Structures:
 //------------------------------------------------------------------------------
 
 namespace Levels
 {
-	class Level3 : public Level
+	class Level4 : public Level
 	{
 	public:
 		//------------------------------------------------------------------------------
 		// Public Functions:
 		//------------------------------------------------------------------------------
 
-		// Creates an instance of Level 3.
-		Level3();
+		// Creates an instance of Level 4.
+		Level4();
 
-		// Load the resources associated with Level 3.
+		// Load the resources associated with Level 4.
 		void Load() override;
 
-		// Initialize the memory associated with Level 3.
+		// Initialize the memory associated with Level 4.
 		void Initialize() override;
 
-		// Update Level 3.
+		// Update Level 4.
 		// Params:
 		//	 dt = Change in time (in seconds) since the last game loop.
 		void Update(float dt) override;
 
-		// Unload the resources associated with Level 3.
+		// Unload the resources associated with Level 4.
 		void Unload() override;
-
-	private:
-
-		//------------------------------------------------------------------------------
-		// Private Variables:
-		//------------------------------------------------------------------------------
 	};
 }
 

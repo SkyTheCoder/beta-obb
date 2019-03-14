@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	Level1.cpp
+// File Name:	Level4.cpp
 // Author(s):	David Cohen (david.cohen)
 // Project:		BetaFramework
 // Course:		WANIC VGP2 2018-2019
@@ -15,7 +15,7 @@
 
 #include "stdafx.h"
 
-#include "Level1.h"
+#include "Level4.h"
 
 // Systems
 #include <Texture.h>
@@ -34,10 +34,9 @@
 #include "Physics.h"
 
 // Levels
+#include "Level1.h"
 #include "Level2.h"
-// David Wong: Added the third level
 #include "Level3.h"
-#include "Level4.h"
 #include "Level5.h"
 
 //------------------------------------------------------------------------------
@@ -52,14 +51,13 @@ namespace Levels
 	// Public Functions:
 	//------------------------------------------------------------------------------
 
-	// Creates an instance of Level 1.
-	Level1::Level1() : Level("Level1"),
-		circleSpeed(0.0f), pointSpeed(0.0f)
+	// Creates an instance of Level 4.
+	Level4::Level4() : Level("Level4")
 	{
 	}
 
-	// Load the resources associated with Level 1.
-	void Level1::Load()
+	// Load the resources associated with Level 4.
+	void Level4::Load()
 	{
 		GameObjectFactory& objectFactory = GameObjectFactory::GetInstance();
 		GameObjectManager& objectManager = GetSpace()->GetObjectManager();
@@ -73,8 +71,8 @@ namespace Levels
 		objectManager.AddArchetype(*objectFactory.CreateObject("ControllableRectangle", resourceManager.GetMesh("Quad")));
 	}
 
-	// Initialize the memory associated with Level 1.
-	void Level1::Initialize()
+	// Initialize the memory associated with Level 4.
+	void Level4::Initialize()
 	{
 		GameObjectManager& objectManager = GetSpace()->GetObjectManager();
 
@@ -82,16 +80,8 @@ namespace Levels
 
 		// Rectangles.
 		GameObject* rectangle = new GameObject(*objectManager.GetArchetypeByName("Rectangle"));
-		rectangle->GetComponent<Transform>()->SetTranslation(Vector2D(-200.0f, 250.0f));
-		rectangle->GetComponent<Transform>()->SetRotation(-M_PI_F / 8.0f);
-		rectangle->GetComponent<Physics>()->SetVelocity(Vector2D(50.0f, -75.0f));
-		rectangle->GetComponent<Physics>()->SetAngularVelocity(M_PI_F / 2.0f);
-		objectManager.AddObject(*rectangle);
-
-		rectangle = new GameObject(*objectManager.GetArchetypeByName("Rectangle"));
-		rectangle->GetComponent<Transform>()->SetTranslation(Vector2D(50.0f, -150.0f));
-		rectangle->GetComponent<Transform>()->SetRotation(M_PI_F / 8.0f);
-		rectangle->GetComponent<Physics>()->SetVelocity(Vector2D(0.0f, 0.0f));
+		rectangle->GetComponent<Transform>()->SetTranslation(Vector2D(150.0f, -100.0f));
+		rectangle->GetComponent<Transform>()->SetRotation(M_PI_F * 3.0f / 8.0f);
 		objectManager.AddObject(*rectangle);
 
 		// Controllable rectangles.
@@ -99,10 +89,10 @@ namespace Levels
 		objectManager.AddObject(*controllableRectangle);
 	}
 
-	// Update Level 1.
+	// Update Level 4.
 	// Params:
 	//	 dt = Change in time (in seconds) since the last game loop.
-	void Level1::Update(float dt)
+	void Level4::Update(float dt)
 	{
 		UNREFERENCED_PARAMETER(dt);
 
@@ -111,20 +101,19 @@ namespace Levels
 		// Handle level switching.
 		if (input.CheckTriggered('1'))
 		{
-			GetSpace()->RestartLevel();
+			GetSpace()->SetLevel<Level1>();
 		}
 		else if (input.CheckTriggered('2'))
 		{
 			GetSpace()->SetLevel<Level2>();
 		}
-		// David Wong: Added the third level
 		else if (input.CheckTriggered('3'))
 		{
 			GetSpace()->SetLevel<Level3>();
 		}
 		else if (input.CheckTriggered('4'))
 		{
-			GetSpace()->SetLevel<Level4>();
+			GetSpace()->RestartLevel();
 		}
 		else if (input.CheckTriggered('5'))
 		{
@@ -132,8 +121,8 @@ namespace Levels
 		}
 	}
 
-	// Unload the resources associated with Level 1.
-	void Level1::Unload()
+	// Unload the resources associated with Level 4.
+	void Level4::Unload()
 	{
 	}
 }
