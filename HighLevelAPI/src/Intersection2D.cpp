@@ -352,20 +352,12 @@ void ProjectPolygon(const Vector2D& normal, const std::vector<Vector2D>& vertice
 
 // Check whether two convex polygons interact
 // Params:
-//	polygon1: The first convex polygon
-//	polygon2: The second convex polygon
+//	lineSegments1: The first convex polygon
+//	lineSegments2: The second convex polygon
 // Returns:
 //	True if intersection, false otherwise
-bool ConvexHullIntersection(const ColliderConvex& polygon1, const ColliderConvex& polygon2)
+bool ConvexHullIntersection(const std::vector<LineSegment>& lineSegments1, const std::vector<LineSegment>& lineSegments2)
 {
-	// Get debug draw information
-	DebugDraw& debug = DebugDraw::GetInstance();
-	Camera& camera = Graphics::GetInstance().GetCurrentCamera();
-
-	// 1.) Get the list of line segments from each polygon
-	const std::vector<LineSegment> lineSegments1 = polygon1.GetLineSegments();
-	const std::vector<LineSegment> lineSegments2 = polygon2.GetLineSegments();
-
 	// Get the minimum and maximum projetions of the first polygon in the line
 	float set1Min;
 	float set1Max;
@@ -427,13 +419,39 @@ bool ConvexHullIntersection(const ColliderConvex& polygon1, const ColliderConvex
 
 // Check whether a convex polygon interacts with a rectangle collider
 //	Params:
-//	polygon: The convex polygon
-//	rect: The rectangle
-bool ConvexHullToOBBIntersection(const ColliderConvex& polygon, const ColliderRectangle& rect)
+//	convexSegments: The line segments of the convex polygon
+//	extents: The extents of the rectangle
+bool ConvexHullToOBBIntersection(const std::vector<LineSegment>& convexSegments, const Vector2D& extents, Transform& rectTransform)
 {
-	UNREFERENCED_PARAMETER(polygon);
-	UNREFERENCED_PARAMETER(rect);
-	return false; // Stub
+	// Create the line segments so that they are rotated but not scaled
+	// The horizontal end is the same as the vertical side's start
+	Vector2D horizontalStart(-extents.x, extents.y);
+	Vector2D horizontalEnd(extents);
+	Vector2D verticalEnd(extents.x, -extents.y);
+
+	// Transform the vertices by the rotation but also scale them back
+	horizontalStart = rectTransform.GetMatrix() * horizontalStart;
+	horizontalEnd = rectTransform.GetMatrix() * horizontalEnd;
+	verticalEnd = rectTransform.GetMatrix() * verticalEnd;
+
+	const Vector2D& transformScale = rectTransform.GetScale();
+
+	horizontalStart.x /= transformScale.x;
+	horizontalStart.y /= transformScale.y;
+	horizontalEnd.x /= transformScale.x;
+	horizontalEnd.y /= transformScale.y;
+	verticalEnd.x /= transformScale.x;
+	verticalEnd.y /= transformScale.y;
+
+	// Construct a convex hull out of the extents of the circle
+	std::vector<LineSegment> extentSegments;
+	// Because a rectangle has two pairs of parallel sides, then we only need to check for those two sides, lol.
+	extentSegments.reserve(2);
+	extentSegments.push_back(LineSegment(horizontalStart, horizontalEnd));
+	extentSegments.push_back(LineSegment(horizontalEnd, verticalEnd));
+	// Finally create the 
+	// Then, just use the convex hull collision detection algorithm already written
+	return ConvexHullIntersection(convexSegments, extentSegments);
 }
 
 // Check whether a moving point and line intersect.
