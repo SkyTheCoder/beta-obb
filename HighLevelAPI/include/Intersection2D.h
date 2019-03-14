@@ -112,17 +112,18 @@ void ProjectPolygon(const Vector2D& normal, const std::vector<Vector2D>& vertice
 
 // Check whether two convex polygons interact
 // Params:
-//	polygon1: The first convex polygon
-//	polygon2: The second convex polygon
+//	lineSegments1: The line segments of the first convex polygon
+//	lineSegments2: The line segments of the second convex polygon
 // Returns:
 //	True if intersection, false otherwise
-bool ConvexHullIntersection(const ColliderConvex& polygon1, const ColliderConvex& polygon2);
+bool ConvexHullIntersection(const std::vector<LineSegment>& lineSegments1, const std::vector<LineSegment>& lineSegments2);
 
 // Check whether a convex polygon interacts with a rectangle collider
 //	Params:
-//	polygon: The convex polygon
-//	rect: The rectangle
-bool ConvexHullToOBBIntersection(const ColliderConvex& polygon, const ColliderRectangle& rect);
+//	convexSegments: The line segments of the convex polygon
+//	extents: The extents of the rectangle
+//	rectTransform: The transformation of the extents of the rectangle
+bool ConvexHullToOBBIntersection(const std::vector<LineSegment>& convexSegments, const Vector2D& extents, Transform& rectTransform);
 
 // Check whether a moving point and line intersect.
 // Params:

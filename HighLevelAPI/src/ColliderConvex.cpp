@@ -127,13 +127,13 @@ bool ColliderConvex::IsCollidingWith(const Collider& other) const
 	case ColliderType::ColliderTypeConvex:
 	{
 		const ColliderConvex& convex = static_cast<const ColliderConvex&>(other);
-		return ConvexHullIntersection(*this, convex);
+		return ConvexHullIntersection(GetLineSegments(), convex.GetLineSegments());
 	}
 	case ColliderType::ColliderTypeRectangle:
 	{
 		const ColliderRectangle& rectangle = static_cast<const ColliderRectangle&>(other);
-		return ConvexHullToOBBIntersection(*this, rectangle);
-
+		Transform* rectTransform = other.GetOwner()->GetComponent<Transform>();
+		return ConvexHullToOBBIntersection(GetLineSegments(), rectangle.GetExtents(), *rectTransform);
 	}
 	default:
 		return false;
