@@ -413,6 +413,39 @@ bool ConvexHullToOBBIntersection(const std::vector<LineSegment>& convexSegments,
 	return ConvexHullIntersection(convexSegments, extentSegments);
 }
 
+// Check whether a circle is colliding with the convex collider
+//	Params:
+//	convexSegments: The line segments of the convex polygon
+//	convexTransform: The transform of the convex figure
+//	circle: The circle we are testing against
+// Returns:
+//	True if intersection, false otherwise
+bool ConvexHullToCircleInteresction(const std::vector<LineSegment>& convexSegments, const Transform& convexTransform, const Circle& circle)
+{
+	// Separate our segments into vertices and normals
+	std::vector<Vector2D> vertexSet;
+	std::vector<Vector2D> normalSet;
+	vertexSet.reserve(convexSegments.size());
+	normalSet.reserve(convexSegments.size() + 3);
+	for (auto begin = convexSegments.cbegin(); begin < convexSegments.cend(); ++begin)
+	{
+		vertexSet.push_back(begin->end);
+		normalSet.push_back(begin->normal);
+	}
+
+	// Add the three normals that come from the circle
+	// One from the rotation of the convex shape
+	Vector2D circleTangent(cosf(convexTransform.GetRotation()), sinf(convexTransform.GetRotation()));
+	normalSet.push_back(circleTangent);
+	// One that is perpendicular to the tangent
+	normalSet.push_back(Vector2D(-circleTangent.y, circleTangent.x));
+	// One that goes from the middle of the circle to the middle of the convex
+	normalSet.push_back((convexTransform.GetTranslation() - circle.center).Normalized());
+
+	// Test the collisions
+	return SATIntersection(normalSet.data(), normalSet.size(), vertexSet.data(), vertexSet.size(), &circle.center, 1, circle.radius);
+}
+
 // Check whether a moving point and line intersect.
 // Params:
 //  staticLine   = Start and end of first line segment.

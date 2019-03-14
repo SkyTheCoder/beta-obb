@@ -17,7 +17,6 @@
 
 #include <Shapes2D.h>					// 2D Shapes
 #include <Intersection2D.h>				// Intersection
-#include <ColliderRectangle.h>			// Rectangle Collider
 #include <Transform.h>					// Transform
 #include <Vector2D.h>					// Vector2D
 #include <Parser.h>						// Parser
@@ -26,6 +25,8 @@
 #include <DebugDraw.h>					// Debug Draw
 #include <Graphics.h>					// Graphics
 
+#include <ColliderRectangle.h>			// Rectangle Collider
+#include <ColliderCircle.h>				// Circle Collider
 //------------------------------------------------------------------------------
 // Public Class Member Functions
 //------------------------------------------------------------------------------
@@ -134,6 +135,14 @@ bool ColliderConvex::IsCollidingWith(const Collider& other) const
 		const ColliderRectangle& rectangle = static_cast<const ColliderRectangle&>(other);
 		Transform* rectTransform = other.GetOwner()->GetComponent<Transform>();
 		return ConvexHullToOBBIntersection(GetLineSegments(), rectangle.GetExtents(), *rectTransform);
+	}
+	case ColliderType::ColliderTypeCircle:
+	{
+		const ColliderCircle& circle = static_cast<const ColliderCircle&>(other);
+		const Transform* convexTransform = GetOwner()->GetComponent<Transform>();
+		const Transform* circleTransform = other.GetOwner()->GetComponent<Transform>();
+		return ConvexHullToCircleInteresction(GetLineSegments(), *convexTransform, 
+			Circle(circleTransform->GetTranslation(), circle.GetRadius()));
 	}
 	default:
 		return false;

@@ -78,16 +78,27 @@ namespace Levels
 		//GameObject* convex = Archetypes::CreateConvexObject1(resourceManager.GetMesh("Quad"), resourceManager.GetSpriteSource("Odd_Diamond.png"));
 		//GameObject* followedConvex = Archetypes::CreateConvexObject2(resourceManager.GetMesh("Quad"), resourceManager.GetSpriteSource("Hexagon.png"));
 		// Create the convex object
-		GameObject* convex = GameObjectFactory::GetInstance().CreateObject("Convex1", resourceManager.GetMesh("Quad"), resourceManager.GetSpriteSource("Odd_Diamond.png"));
-		GameObject* followedConvex = GameObjectFactory::GetInstance().CreateObject("Convex2", resourceManager.GetMesh("Quad"), resourceManager.GetSpriteSource("Hexagon.png"));
+		GameObject* followedConvex = GameObjectFactory::GetInstance().CreateObject("Convex2", resourceManager.GetMesh("Quad"), 
+			resourceManager.GetSpriteSource("Hexagon.png"));
+
+		GameObject* convex = GameObjectFactory::GetInstance().CreateObject("Convex1", resourceManager.GetMesh("Quad"), 
+			resourceManager.GetSpriteSource("Odd_Diamond.png"));
+
 		GameObject* rectangle = GameObjectFactory::GetInstance().CreateObject("Rectangle", resourceManager.GetMesh("Quad"));
-		rectangle->GetComponent<Transform>()->SetTranslation(Vector2D(200, 0));
+
+		GameObject* circle = GameObjectFactory::GetInstance().CreateObject("Circle", resourceManager.GetMesh("Quad"), 
+			resourceManager.GetSpriteSource("Circle.png"));
+
+		rectangle->GetComponent<Transform>()->SetTranslation(Vector2D(200, -150));
+		circle->GetComponent<Transform>()->SetTranslation(Vector2D(0, 200));
+		convex->GetComponent<Transform>()->SetTranslation(Vector2D(-200, -150));
 
 		followedConvex->AddComponent(new Behaviors::MouseFollow);
 
 		GetSpace()->GetObjectManager().AddObject(*convex);
 		GetSpace()->GetObjectManager().AddObject(*followedConvex);
 		GetSpace()->GetObjectManager().AddObject(*rectangle);
+		GetSpace()->GetObjectManager().AddObject(*circle);
 	}
 
 	// Update Level 3.

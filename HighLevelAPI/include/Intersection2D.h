@@ -148,7 +148,18 @@ bool ConvexHullIntersection(const std::vector<LineSegment>& lineSegments1, const
 //	convexSegments: The line segments of the convex polygon
 //	extents: The extents of the rectangle
 //	rectTransform: The transformation of the extents of the rectangle
+// Returns:
+//	True if interesction, false otherwise
 bool ConvexHullToOBBIntersection(const std::vector<LineSegment>& convexSegments, const Vector2D& extents, Transform& rectTransform);
+
+// Check whether a circle is colliding with the convex collider
+//	Params:
+//	convexSegments: The line segments of the convex polygon
+//	convexTransform: The transforma of the convex figure
+//	circle: The circle we are testing against
+// Returns:
+//	True if intersection, false otherwise
+bool ConvexHullToCircleInteresction(const std::vector<LineSegment>& convexSegments, const Transform& convexTransform, const Circle& circle);
 
 // Check whether a moving point and line intersect.
 // Params:
