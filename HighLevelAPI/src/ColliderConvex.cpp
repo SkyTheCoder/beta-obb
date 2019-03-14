@@ -35,25 +35,25 @@ ColliderConvex::ColliderConvex()
 
 }
 
-ColliderConvex::ColliderConvex(const std::vector<LineSegment>& localPoints_)
-	: Collider(ColliderType::ColliderTypeConvex), localPoints()
+ColliderConvex::ColliderConvex(const std::vector<LineSegment>& localLines_)
+	: Collider(ColliderType::ColliderTypeConvex), localLines()
 {
 	// Save the vertices of the collider
-	localPoints.reserve(localPoints_.size());
-	for (auto begin = localPoints_.cbegin(); begin < localPoints_.cend(); ++begin)
+	localLines.reserve(localLines_.size());
+	for (auto begin = localLines_.cbegin(); begin < localLines_.cend(); ++begin)
 	{
-		localPoints.push_back(*begin);
+		localLines.push_back(*begin);
 	}
 }
 
 ColliderConvex::ColliderConvex(const LineSegment* localPoints_, size_t size)
-	: Collider(ColliderType::ColliderTypeConvex), localPoints()
+	: Collider(ColliderType::ColliderTypeConvex), localLines()
 {
 	// Save the vertices of the collider
-	localPoints.reserve(size);
+	localLines.reserve(size);
 	for (unsigned i = 0; i < size; ++i)
 	{
-		localPoints.push_back(localPoints_[i]);
+		localLines.push_back(localPoints_[i]);
 	}
 }
 
@@ -64,12 +64,38 @@ Component* ColliderConvex::Clone() const
 
 void ColliderConvex::Serialize(Parser& parser) const
 {
-	UNREFERENCED_PARAMETER(parser);
+	// Write the number of line segments that we have
+	parser.WriteVariable("lineCount", localLines.size());
+	// Then write the lines we've got
+	parser.WriteVariable("lines", "");
+	parser.BeginScope();
+	for (auto begin = localLines.cbegin(); begin < localLines.cend(); begin++)
+	{
+		parser.WriteValue(*begin);
+	}
+	parser.EndScope();
 }
 
 void ColliderConvex::Deserialize(Parser& parser)
 {
-	UNREFERENCED_PARAMETER(parser);
+	// Read the amont of lines we've got
+	int lineCount;
+	parser.ReadVariable("lineCount", lineCount);
+	// Skip over the lines variable
+	parser.ReadSkip("lines");
+	parser.ReadSkip(':');
+	parser.ReadSkip('{');
+	// Read the lines
+	localLines.reserve(lineCount);
+
+	for (unsigned i = 0; i < lineCount; ++i)
+	{
+		LineSegment segment;
+		parser.ReadValue(segment);
+		localLines.push_back(segment);
+	}
+	// Skip over the ending scope
+	parser.ReadSkip('}');
 }
 
 void ColliderConvex::Draw()
@@ -116,20 +142,20 @@ bool ColliderConvex::IsCollidingWith(const Collider& other) const
 
 void ColliderConvex::AddSide(const LineSegment& segment)
 {
-	localPoints.push_back(LineSegment(segment));
+	localLines.push_back(LineSegment(segment));
 }
 
 const std::vector<LineSegment>& ColliderConvex::GetLocalLineSegments() const
 {
-	return localPoints;
+	return localLines;
 }
 
 std::vector<LineSegment> ColliderConvex::GetLineSegments() const
 {
 	std::vector<LineSegment> transformed;
-	transformed.reserve(localPoints.size());
+	transformed.reserve(localLines.size());
 
-	for (auto begin = localPoints.cbegin(); begin < localPoints.cend(); ++begin)
+	for (auto begin = localLines.cbegin(); begin < localLines.cend(); ++begin)
 	{
 		LineSegment transformedSegment(transform->GetMatrix() * begin->start, transform->GetMatrix() * begin->end);
 		transformed.push_back(transformedSegment);

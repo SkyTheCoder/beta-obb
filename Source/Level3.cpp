@@ -73,8 +73,8 @@ namespace Levels
 		ResourceManager& resourceManager = GetSpace()->GetResourceManager();
 
 		// Create the convex object
-		GameObject* convex = Archetypes::CreateConvexObject1(resourceManager.GetMesh("Quad"));
-		GameObject* followedConvex = Archetypes::CreateConvexObject2(resourceManager.GetMesh("Quad"));
+		GameObject* convex = GameObjectFactory::GetInstance().CreateObject("Convex1", resourceManager.GetMesh("Quad"));
+		GameObject* followedConvex = GameObjectFactory::GetInstance().CreateObject("Convex2", resourceManager.GetMesh("Quad"));
 
 		followedConvex->AddComponent(new Behaviors::MouseFollow);
 

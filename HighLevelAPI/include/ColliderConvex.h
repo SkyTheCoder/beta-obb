@@ -33,7 +33,7 @@ private:
 	//------------------------------------------------------------------------------
 
 	// The local points of the collider
-	std::vector<LineSegment> localPoints;
+	std::vector<LineSegment> localLines;
 public:
 	//------------------------------------------------------------------------------
 	// Public Functions
@@ -45,13 +45,13 @@ public:
 	// Constructs a convex polygon colllider
 	// Params:
 	//	localPoints: The points of the convex polygon in relation to the center of it
-	ColliderConvex(const std::vector<LineSegment>& localPoints);
+	ColliderConvex(const std::vector<LineSegment>& localLines);
 	
 	// Constructs a convex polygon collider
 	// Params:
 	//	localPoints: The points of the convex polygon in relation to its center
 	//	size: The number of points we are putting in
-	ColliderConvex(const LineSegment* localPoints, size_t size);
+	ColliderConvex(const LineSegment* localLines, size_t size);
 
 	// Clones this component
 	// Returns:

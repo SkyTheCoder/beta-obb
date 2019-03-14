@@ -286,6 +286,8 @@ namespace Archetypes
 		convex->AddComponent(collider);
 		convex->AddComponent(new Behaviors::ColorChange(Colors::Blue, Colors::Red));
 
+		GameObjectFactory::GetInstance().SaveObjectToFile(convex);
+
 		return convex;
 	}
 
@@ -311,6 +313,8 @@ namespace Archetypes
 		convex->AddComponent(sprite);
 		convex->AddComponent(collider);
 		convex->AddComponent(new Behaviors::ColorChange(Colors::Blue, Colors::Red));
+
+		GameObjectFactory::GetInstance().SaveObjectToFile(convex);
 
 		return convex;
 	}
