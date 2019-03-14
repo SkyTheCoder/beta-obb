@@ -106,6 +106,75 @@ bool RectangleCircleIntersection(const BoundingRectangle& rect, const Circle& ci
 	return point.DistanceSquared(circle.center) <= circle.radius * circle.radius;
 }
 
+// Checks for an intersection using the separating axis theorem.
+// Params:
+//   axes = The array of axes to check.
+//   axesSize = How many elements are in the array of axes.
+//   points1 = The array of points in the first convex hull.
+//   points1Size = How many points are in the first convex hull.
+//   points2 = The array of points in the second convex hull.
+//   points2Size = How many points are in the second convex hull.
+//   points2Offset = A value to add to/subtract from the second convex hull's projected points, essentially a radius for each point.
+// Returns:
+//   True if intersection, false otherwise.
+bool SATIntersection(const Vector2D* axes, unsigned axesSize, const Vector2D* points1, unsigned points1Size, const Vector2D* points2, unsigned points2Size, float points2Offset)
+{
+	DebugDraw& debugDraw = DebugDraw::GetInstance();
+	Camera& currentCamera = Graphics::GetInstance().GetCurrentCamera();
+	
+	// Loop through each normal.
+	for (unsigned i = 0; i < axesSize; i++)
+	{
+		float minExtents1 = FLT_MAX;
+		float maxExtents1 = -FLT_MAX;
+		float minExtents2 = FLT_MAX;
+		float maxExtents2 = -FLT_MAX;
+
+		// Draw the axis line.
+		debugDraw.AddLineToStrip(-400.0f * axes[i], 400.0f * axes[i], Colors::LightBlue);
+		debugDraw.EndLineStrip(currentCamera);
+
+		for (unsigned j = 0; j < points1Size; j++)
+		{
+			// Project the current point along the current axis.
+			float projectedPoint = points1[j].DotProduct(axes[i]);
+			
+			// Draw the point being projected along the current axis.
+			debugDraw.AddLineToStrip(points1[j], axes[i] * projectedPoint, Colors::Yellow);
+			debugDraw.AddCircle(axes[i] * projectedPoint, 5.0f, currentCamera, Colors::Violet);
+
+			// Update the min/max extents of each convex hull.
+			maxExtents1 = max(maxExtents1, projectedPoint);
+			minExtents1 = min(minExtents1, projectedPoint);
+		}
+
+		for (unsigned j = 0; j < points2Size; j++)
+		{
+			// Project the current point along the current axis.
+			float projectedPoint = points2[j].DotProduct(axes[i]);
+
+			// Draw the point being projected along the current axis.
+			debugDraw.AddLineToStrip(points2[j] - axes[i] * points2Offset, axes[i] * (projectedPoint - points2Offset), Colors::Yellow);
+			debugDraw.AddCircle(axes[i] * (projectedPoint - points2Offset), 5.0f, currentCamera, Colors::Violet);
+			debugDraw.AddLineToStrip(points2[j] + axes[i] * points2Offset, axes[i] * (projectedPoint + points2Offset), Colors::Yellow);
+			debugDraw.AddCircle(axes[i] * (projectedPoint + points2Offset), 5.0f, currentCamera, Colors::Violet);
+
+			// Update the min/max extents of each convex hull.
+			maxExtents2 = max(maxExtents2, projectedPoint);
+			minExtents2 = min(minExtents2, projectedPoint);
+		}
+
+		debugDraw.EndLineStrip(currentCamera);
+
+		// If there is a gap between the min and max extents on this axis, the convex hulls are not colliding.
+		if (maxExtents1 < (minExtents2 - points2Offset) || (maxExtents2 + points2Offset) < minExtents1)
+			return false;
+	}
+
+	// If we reached this point, there is no gap, the OBBs are colliding.
+	return true;
+}
+
 // Calculates the (object space) corner points of a rectangle.
 // Params:
 //   rect = The ColliderRectangle to calculate points for.
@@ -126,6 +195,17 @@ void GetOBBCorners(const ColliderRectangle& rect, Vector2D out[4])
 	out[3] = -extents;
 }
 
+// Applies a transformation matrix to an array of points.
+// Params:
+//   matrix = The transformation matrix.
+//   points = The array of points.
+//   pointsSize = How many elements are in the array.
+void ApplyTransformToPoints(const CS230::Matrix2D& matrix, Vector2D* points, unsigned pointsSize)
+{
+	for (unsigned i = 0; i < pointsSize; i++)
+		points[i] = matrix * points[i];
+}
+
 // Check whether two oriented bounding boxes intersect.
 // Params:
 //  rect1 = The first rectangle.
@@ -137,13 +217,13 @@ bool OBBOBBIntersection(const ColliderRectangle& rect1, const ColliderRectangle&
 	float angle1 = rect1.transform->GetRotation();
 	float angle2 = rect2.transform->GetRotation();
 
-	Vector2D normals[4];
+	Vector2D axes[4];
 
-	// Calculate all the normals we need to check for gaps along.
-	normals[0] = Vector2D(cos(angle1), sin(angle1));
-	normals[1] = Vector2D(-normals[0].y, normals[0].x);
-	normals[2] = Vector2D(cos(angle2), sin(angle2));
-	normals[3] = Vector2D(-normals[2].y, normals[2].x);
+	// Calculate all the axes we need to check for gaps along.
+	axes[0] = Vector2D(cos(angle1), sin(angle1));
+	axes[1] = Vector2D(-axes[0].y, axes[0].x);
+	axes[2] = Vector2D(cos(angle2), sin(angle2));
+	axes[3] = Vector2D(-axes[2].y, axes[2].x);
 
 	Vector2D points1[4];
 	Vector2D points2[4];
@@ -152,34 +232,12 @@ bool OBBOBBIntersection(const ColliderRectangle& rect1, const ColliderRectangle&
 	GetOBBCorners(rect1, points1);
 	GetOBBCorners(rect2, points2);
 
-	// Loop through each normal.
-	for (unsigned i = 0; i < 4; i++)
-	{
-		float minExtents1 = FLT_MAX;
-		float maxExtents1 = -FLT_MAX;
-		float minExtents2 = FLT_MAX;
-		float maxExtents2 = -FLT_MAX;
-		
-		for (unsigned j = 0; j < 4; j++)
-		{
-			// Project the current point from each rectangle along the current axis.
-			float projectedPoint1 = (rect1.transform->GetMatrix() * points1[j]).DotProduct(normals[i]);
-			float projectedPoint2 = (rect2.transform->GetMatrix() * points2[j]).DotProduct(normals[i]);
+	// Apply the transformation matrices to the rectangles' points.
+	ApplyTransformToPoints(rect1.transform->GetMatrix(), points1, 4);
+	ApplyTransformToPoints(rect2.transform->GetMatrix(), points2, 4);
 
-			// Update the min/max extents of each rectangle.
-			maxExtents1 = max(maxExtents1, projectedPoint1);
-			minExtents1 = min(minExtents1, projectedPoint1);
-			maxExtents2 = max(maxExtents2, projectedPoint2);
-			minExtents2 = min(minExtents2, projectedPoint2);
-		}
-
-		// If there is a gap between the min and max extents on this axis, the OBBs are not colliding.
-		if (maxExtents1 < minExtents2 || maxExtents2 < minExtents1)
-			return false;
-	}
-
-	// If we reached this point, there is no gap, the OBBs are colliding.
-	return true;
+	// Perform the intersection test.
+	return SATIntersection(axes, 4, points1, 4, points2, 4);
 }
 
 // Check whether an oriented bounding box and a point intersect.
@@ -192,44 +250,23 @@ bool OBBPointIntersection(const ColliderRectangle& rect, const Vector2D& point)
 {
 	float angle1 = rect.transform->GetRotation();
 
-	Vector2D normals[3];
+	Vector2D axes[3];
 
-	// Calculate all the normals we need to check for gaps along.
-	normals[0] = Vector2D(cos(angle1), sin(angle1));
-	normals[1] = Vector2D(-normals[0].y, normals[0].x);
-	normals[2] = (point - rect.transform->GetTranslation()).Normalized(); // Direction from the rectangle to the point
+	// Calculate all the axes we need to check for gaps along.
+	axes[0] = Vector2D(cos(angle1), sin(angle1));
+	axes[1] = Vector2D(-axes[0].y, axes[0].x);
+	axes[2] = (point - rect.transform->GetTranslation()).Normalized(); // Direction from the rectangle to the point
 
 	Vector2D points[4];
 
 	// Gather the points for the rectangle.
 	GetOBBCorners(rect, points);
 
-	// Loop through each normal.
-	for (unsigned i = 0; i < 3; i++)
-	{
-		float minExtents = FLT_MAX;
-		float maxExtents = -FLT_MAX;
+	// Apply the transformation matrix to the rectangle's points.
+	ApplyTransformToPoints(rect.transform->GetMatrix(), points, 4);
 
-		// Project the circle's center along the current axis.
-		float projectedPointCenter = point.DotProduct(normals[i]);
-
-		for (unsigned j = 0; j < 4; j++)
-		{
-			// Project the current point from the rectangle along the current axis.
-			float projectedPoint = (rect.transform->GetMatrix() * points[j]).DotProduct(normals[i]);
-
-			// Update the min/max extents of the rectangle.
-			maxExtents = max(maxExtents, projectedPoint);
-			minExtents = min(minExtents, projectedPoint);
-		}
-
-		// If there is a gap between the min and max extents on this axis, the OBB and circle are not colliding.
-		if (maxExtents < projectedPointCenter || projectedPointCenter < minExtents)
-			return false;
-	}
-
-	// If we reached this point, there is no gap, the OBB and circle are colliding.
-	return true;
+	// Perform the intersection test.
+	return SATIntersection(axes, 3, points, 4, &point, 1);
 }
 
 // Check whether an oriented bounding box and a circle intersect.
@@ -242,65 +279,23 @@ bool OBBCircleIntersection(const ColliderRectangle& rect, const Circle& circle)
 {
 	float angle1 = rect.transform->GetRotation();
 
-	Vector2D normals[3];
+	Vector2D axes[3];
 
-	// Calculate all the normals we need to check for gaps along.
-	normals[0] = Vector2D(cos(angle1), sin(angle1));
-	normals[1] = Vector2D(-normals[0].y, normals[0].x);
-	normals[2] = (circle.center - rect.transform->GetTranslation()).Normalized(); // Direction from the rectangle to the circle
-
-	DebugDraw& debugDraw = DebugDraw::GetInstance();
-	Camera& currentCamera = Graphics::GetInstance().GetCurrentCamera();
-
-	// Draw the axis lines.
-	for (unsigned i = 0; i < 3; i++)
-		debugDraw.AddLineToStrip(-400.0f * normals[i], 400.0f * normals[i], Colors::LightBlue);
-	debugDraw.EndLineStrip(currentCamera);
+	// Calculate all the axes we need to check for gaps along.
+	axes[0] = Vector2D(cos(angle1), sin(angle1));
+	axes[1] = Vector2D(-axes[0].y, axes[0].x);
+	axes[2] = (circle.center - rect.transform->GetTranslation()).Normalized(); // Direction from the rectangle to the circle
 
 	Vector2D points[4];
 
 	// Gather the points for the rectangle.
 	GetOBBCorners(rect, points);
 	
-	// Loop through each normal.
-	for (unsigned i = 0; i < 3; i++)
-	{
-		float minExtents = FLT_MAX;
-		float maxExtents = -FLT_MAX;
+	// Apply the transformation matrix to the rectangle's points.
+	ApplyTransformToPoints(rect.transform->GetMatrix(), points, 4);
 
-		// Project the circle's center along the current axis.
-		float projectedCircleCenter = circle.center.DotProduct(normals[i]);
-
-		for (unsigned j = 0; j < 4; j++)
-		{
-			// Project the current point from the rectangle along the current axis.
-			float projectedPoint = (rect.transform->GetMatrix() * points[j]).DotProduct(normals[i]);
-
-			// Draw the point being projected along the current axis.
-			debugDraw.AddLineToStrip(rect.transform->GetMatrix() * points[j], normals[i] * projectedPoint, Colors::Yellow);
-			debugDraw.AddCircle(normals[i] * projectedPoint, 5.0f, currentCamera, Colors::Violet);
-
-			// Update the min/max extents of the rectangle.
-			maxExtents = max(maxExtents, projectedPoint);
-			minExtents = min(minExtents, projectedPoint);
-		}
-
-		// Draw the circle's points being projected along the current axis.
-		debugDraw.AddLineToStrip(circle.center, normals[i] * projectedCircleCenter, Colors::Yellow);
-		debugDraw.AddLineToStrip(circle.center - normals[i] * circle.radius, normals[i] * (projectedCircleCenter - circle.radius), Colors::Yellow);
-		debugDraw.AddLineToStrip(circle.center + normals[i] * circle.radius, normals[i] * (projectedCircleCenter + circle.radius), Colors::Yellow);
-		debugDraw.AddCircle(normals[i] * projectedCircleCenter, 5.0f, currentCamera, Colors::Violet);
-		debugDraw.AddCircle(normals[i] * (projectedCircleCenter - circle.radius), 5.0f, currentCamera, Colors::Violet);
-		debugDraw.AddCircle(normals[i] * (projectedCircleCenter + circle.radius), 5.0f, currentCamera, Colors::Violet);
-		debugDraw.EndLineStrip(currentCamera);
-
-		// If there is a gap between the min and max extents on this axis, the OBB and circle are not colliding.
-		if (maxExtents < projectedCircleCenter - circle.radius || projectedCircleCenter + circle.radius < minExtents)
-			return false;
-	}
-
-	// If we reached this point, there is no gap, the OBB and circle are colliding.
-	return true;
+	// Perform the intersection test.
+	return SATIntersection(axes, 3, points, 4, &circle.center, 1, circle.radius);
 }
 
 // Projects a polygon into a normal

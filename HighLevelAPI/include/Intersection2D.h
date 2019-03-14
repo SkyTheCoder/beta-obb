@@ -28,6 +28,11 @@ class Physics;
 class ColliderRectangle;
 class ColliderConvex;
 
+namespace CS230
+{
+	class Matrix2D;
+}
+
 //------------------------------------------------------------------------------
 // Public Function Declarations:
 //------------------------------------------------------------------------------
@@ -72,11 +77,31 @@ bool RectangleRectangleIntersection(const BoundingRectangle& rect1, const Boundi
 //   True if intersection, false otherwise.
 bool RectangleCircleIntersection(const BoundingRectangle& rect, const Circle& circle);
 
+// Checks for an intersection using the separating axis theorem.
+// Params:
+//   axes = The array of axes to check.
+//   axesSize = How many elements are in the array of axes.
+//   points1 = The array of points in the first convex hull.
+//   points1Size = How many points are in the first convex hull.
+//   points2 = The array of points in the second convex hull.
+//   points2Size = How many points are in the second convex hull.
+//   points2Offset = A value to add to/subtract from the second convex hull's projected points, essentially a radius for each point.
+// Returns:
+//   True if intersection, false otherwise.
+bool SATIntersection(const Vector2D* axes, unsigned axesSize, const Vector2D* points1, unsigned points1Size, const Vector2D* points2, unsigned points2Size, float points2Offset = 0.0f);
+
 // Calculates the (object space) corner points of a rectangle.
 // Params:
 //   rect = The ColliderRectangle to calculate points for.
 //   out = The output array of points. Assumed to have a size of 4.
 void GetOBBCorners(const ColliderRectangle& rect, Vector2D out[4]);
+
+// Applies a transformation matrix to an array of points.
+// Params:
+//   matrix = The transformation matrix.
+//   points = The array of points.
+//   pointsSize = How many elements are in the array.
+void ApplyTransformToPoints(const CS230::Matrix2D& matrix, Vector2D* points, unsigned pointsSize);
 
 // Check whether two oriented bounding boxes intersect.
 // Params:
