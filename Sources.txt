@@ -1,0 +1,5 @@
+https://www.habrador.com/tutorials/math/7-rectangle-rectangle-intersection/
+https://gist.github.com/eliasdaler/502b54fcf1b515bcc50360ce874e81bc
+https://gamedevelopment.tutsplus.com/tutorials/collision-detection-using-the-separating-axis-theorem--gamedev-169
+https://gamedev.stackexchange.com/questions/25397/obb-vs-obb-collision-detection
+http://www.jkh.me/files/tutorials/Separating%20Axis%20Theorem%20for%20Oriented%20Bounding%20Boxes.pdf
