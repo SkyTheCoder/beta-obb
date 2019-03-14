@@ -86,6 +86,14 @@ void GetOBBCorners(const ColliderRectangle& rect, Vector2D out[4]);
 //   True if intersection, false otherwise.
 bool OBBOBBIntersection(const ColliderRectangle& rect1, const ColliderRectangle& rect2);
 
+// Check whether an oriented bounding box and a point intersect.
+// Params:
+//  rect = The OBB.
+//	point = The point.
+// Returns:
+//   True if intersection, false otherwise.
+bool OBBPointIntersection(const ColliderRectangle& rect, const Vector2D& point);
+
 // Check whether an oriented bounding box and a circle intersect.
 // Params:
 //  rect = The OBB.

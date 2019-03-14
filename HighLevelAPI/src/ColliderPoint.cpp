@@ -84,13 +84,6 @@ bool ColliderPoint::IsCollidingWith(const Collider& other) const
 		// Check if the point is intersecting the circle.
 		return PointCircleIntersection(transform->GetTranslation(), Circle(otherTranslation, otherCircle.GetRadius()));
 	}
-	case ColliderTypeRectangle:
-	{
-		const ColliderRectangle& otherRectangle = static_cast<const ColliderRectangle&>(other);
-
-		// Check if the point is intersecting the rectangle.
-		return PointRectangleIntersection(transform->GetTranslation(), BoundingRectangle(otherTranslation, otherRectangle.GetExtents()));
-	}
 	}
 
 	return other.IsCollidingWith(*this);
