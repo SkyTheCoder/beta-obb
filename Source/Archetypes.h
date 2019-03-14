@@ -84,16 +84,18 @@ namespace Archetypes
 	// Creates a convex polygon
 	// Params:
 	//   mesh: The mesh of the game object
+	//   source: The sprite source of the game object
 	// Returns:
 	//  A pointer to the to constructed game object
-	GameObject* CreateConvexObject1(Mesh* mesh);
+	GameObject* CreateConvexObject1(Mesh* mesh, SpriteSource* source);
 
 	// Creates a convex polygon
 	// Params:
 	//   mesh: The mesh of the game object
+	//   source: The sprite source of the game object
 	// Returns:
 	//  A pointer to the to constructed game object
-	GameObject* CreateConvexObject2(Mesh* mesh);
+	GameObject* CreateConvexObject2(Mesh* mesh, SpriteSource* source);
 	
 	// Create a tilemap object
 	// Params:

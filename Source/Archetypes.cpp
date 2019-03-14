@@ -264,12 +264,13 @@ namespace Archetypes
 		return rectangle;
 	}
 
-	GameObject* CreateConvexObject1(Mesh* mesh)
+	GameObject* CreateConvexObject1(Mesh* mesh, SpriteSource* source)
 	{
 		GameObject* convex = new GameObject("Convex1");
 		Transform* transform = new Transform(Vector2D(-200, 0), Vector2D(300, 300));
 		Sprite* sprite = new Sprite;
 		sprite->SetMesh(mesh);
+		sprite->SetSpriteSource(source);
 		
 		LineSegment segments[5] = {
 			LineSegment(Vector2D(0.f, 0.5f), Vector2D(-0.5f, 0.f)),
@@ -291,12 +292,13 @@ namespace Archetypes
 		return convex;
 	}
 
-	GameObject* CreateConvexObject2(Mesh* mesh)
+	GameObject* CreateConvexObject2(Mesh* mesh, SpriteSource* source)
 	{
 		GameObject* convex = new GameObject("Convex2");
-		Transform* transform = new Transform(Vector2D(-200, 0), Vector2D(300, 300));
+		Transform* transform = new Transform(Vector2D(-200, 0), Vector2D(200, 200));
 		Sprite* sprite = new Sprite;
 		sprite->SetMesh(mesh);
+		sprite->SetSpriteSource(source);
 
 		LineSegment segments[6] = {
 			LineSegment(Vector2D(-0.25f, 0.25f), Vector2D(0.f, .5f)),

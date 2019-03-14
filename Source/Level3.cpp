@@ -64,6 +64,9 @@ namespace Levels
 		ResourceManager& resourceManager = GetSpace()->GetResourceManager();
 		// Create the quad mesh
 		resourceManager.GetMesh("Quad");
+		// Create the sprite sources
+		resourceManager.GetSpriteSource("Hexagon.png");
+		resourceManager.GetSpriteSource("Odd_Diamond.png");
 	}
 
 	// Initialize the memory associated with Level 3.
@@ -72,9 +75,11 @@ namespace Levels
 		// Get the resource manager
 		ResourceManager& resourceManager = GetSpace()->GetResourceManager();
 
+		GameObject* convex = Archetypes::CreateConvexObject1(resourceManager.GetMesh("Quad"), resourceManager.GetSpriteSource("Odd_Diamond.png"));
+		GameObject* followedConvex = Archetypes::CreateConvexObject2(resourceManager.GetMesh("Quad"), resourceManager.GetSpriteSource("Hexagon.png"));
 		// Create the convex object
-		GameObject* convex = GameObjectFactory::GetInstance().CreateObject("Convex1", resourceManager.GetMesh("Quad"));
-		GameObject* followedConvex = GameObjectFactory::GetInstance().CreateObject("Convex2", resourceManager.GetMesh("Quad"));
+		//GameObject* convex = GameObjectFactory::GetInstance().CreateObject("Convex1", resourceManager.GetMesh("Quad"), resourceManager.GetSpriteSource("Odd_Diamond.png"));
+		//GameObject* followedConvex = GameObjectFactory::GetInstance().CreateObject("Convex2", resourceManager.GetMesh("Quad"), resourceManager.GetSpriteSource("Hexagon.png"));
 
 		followedConvex->AddComponent(new Behaviors::MouseFollow);
 
@@ -94,7 +99,7 @@ namespace Levels
 		// Handle level switching.
 		if (input.CheckTriggered('1'))
 		{
-			GetSpace()->SetLevel<Level3>();
+			GetSpace()->SetLevel<Level1>();
 		}
 		else if (input.CheckTriggered('2'))
 		{
