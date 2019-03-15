@@ -330,3 +330,7 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+/beta-obb.zip
+/Build/Assets/Private_Images
+/Build/Assets/Shaders
+/Build/Source Changes

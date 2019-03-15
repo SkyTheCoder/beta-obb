@@ -27,6 +27,7 @@
 
 #include <ColliderRectangle.h>			// Rectangle Collider
 #include <ColliderCircle.h>				// Circle Collider
+#include <ColliderPoint.h>				// Point Collider
 //------------------------------------------------------------------------------
 // Public Class Member Functions
 //------------------------------------------------------------------------------
@@ -143,6 +144,11 @@ bool ColliderConvex::IsCollidingWith(const Collider& other) const
 		const Transform* circleTransform = other.GetOwner()->GetComponent<Transform>();
 		return ConvexHullToCircleInteresction(GetLineSegments(), *convexTransform, 
 			Circle(circleTransform->GetTranslation(), circle.GetRadius()));
+	}
+	case ColliderType::ColliderTypePoint:
+	{
+		Transform* point = other.GetOwner()->GetComponent<Transform>();
+		return ConvexHullToPointIntersection(GetLineSegments(), point->GetTranslation());
 	}
 	default:
 		return false;

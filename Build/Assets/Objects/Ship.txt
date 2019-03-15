@@ -1,0 +1,34 @@
+Ship
+{
+  numComponents : 5
+  Transform
+  {
+    translation : { 0, 0 }
+    rotation : 0
+    scale : { 50, 50 }
+  }
+  Sprite
+  {
+    frameIndex : 0
+    color : { 1 , 1 , 1 , 1 }
+  }
+  Physics
+  {
+    acceleration : { 0, 0 }
+    velocity : { 0, 0 }
+    angularVelocity : 0
+    mass : 1
+  }
+  Behaviors::PlayerShip
+  {
+    forwardThrust : 100
+    maximumSpeed : 100
+    rotationSpeed : 3.14159
+    bulletSpeed : 200
+    deathDuration : 4
+  }
+  ColliderCircle
+  {
+    radius : 25
+  }
+}

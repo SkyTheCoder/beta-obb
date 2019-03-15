@@ -91,16 +91,21 @@ namespace Levels
 		GameObject* circle = GameObjectFactory::GetInstance().CreateObject("Circle", resourceManager.GetMesh("Quad"), 
 			resourceManager.GetSpriteSource("Circle.png"));
 
+		GameObject* point = GameObjectFactory::GetInstance().CreateObject("Point", resourceManager.GetMesh("Quad"), resourceManager.GetSpriteSource("Circle.png"));
+
 		rectangle->GetComponent<Transform>()->SetTranslation(Vector2D(200, -150));
 		circle->GetComponent<Transform>()->SetTranslation(Vector2D(0, 200));
 		convex->GetComponent<Transform>()->SetTranslation(Vector2D(-200, -150));
+		//followedConvex->GetComponent<Transform>()->SetScale(Vector2D(500, 500));
 
 		followedConvex->AddComponent(new Behaviors::MouseFollow);
 
-		GetSpace()->GetObjectManager().AddObject(*convex);
-		GetSpace()->GetObjectManager().AddObject(*followedConvex);
-		GetSpace()->GetObjectManager().AddObject(*rectangle);
-		GetSpace()->GetObjectManager().AddObject(*circle);
+		GameObjectManager& manager = GetSpace()->GetObjectManager();
+		manager.AddObject(*convex);
+		manager.AddObject(*followedConvex);
+		manager.AddObject(*rectangle);
+		manager.AddObject(*circle);
+		manager.AddObject(*point);
 	}
 
 	// Update Level 3.

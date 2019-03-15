@@ -1,0 +1,39 @@
+ControllableRectangle
+{
+  numComponents : 7
+  Transform
+  {
+    translation : { 0, 0 }
+    rotation : 0
+    scale : { 250, 100 }
+  }
+  Sprite
+  {
+    frameIndex : 0
+    color : { 1 , 1 , 1 , 1 }
+  }
+  Physics
+  {
+    acceleration : { 0, 0 }
+    velocity : { 0, 0 }
+    angularVelocity : 0
+    mass : 1
+  }
+  ColliderRectangle
+  {
+    extents : { 125, 50 }
+  }
+  Behaviors::ColorChange
+  {
+    normalColor : { 0 , 1 , 0 , 1 }
+    collidedColor : { 1 , 0 , 0 , 1 }
+    collidedColorTime : 0.1
+  }
+  Behaviors::ScreenWrap
+  {
+  }
+  Behaviors::MouseFollow
+  {
+    rotationSpeed : 3.14159
+  }
+}

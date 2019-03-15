@@ -375,14 +375,7 @@ void ProjectPolygon(const Vector2D& normal, const std::vector<Vector2D>& vertice
 //	True if intersection, false otherwise
 bool ConvexHullIntersection(const std::vector<LineSegment>& lineSegments1, const std::vector<LineSegment>& lineSegments2)
 {
-	// Get the minimum and maximum projetions of the first polygon in the line
-	float set1Min;
-	float set1Max;
-	// Get the minimum and maximum projections of the second polygon in the line
-	float set2Min;
-	float set2Max;
-
-	// 2.) Save the vertices and normals of both line segments
+	// Save the vertices and normals of both line segments
 	std::vector<Vector2D> vertexSet1;
 	std::vector<Vector2D> vertexSet2;
 	std::vector<Vector2D> normalSet;
@@ -483,6 +476,29 @@ bool ConvexHullToCircleInteresction(const std::vector<LineSegment>& convexSegmen
 
 	// Test the collisions
 	return SATIntersection(normalSet.data(), normalSet.size(), vertexSet.data(), vertexSet.size(), &circle.center, 1, circle.radius);
+}
+
+// Checks whether a point is inside a convex shape
+// Params:
+//	point: The point we are testing
+//	convexSegments: The line segments of the convex polygon
+// Returns:
+//	True if intersection, false otherwise
+bool ConvexHullToPointIntersection(const std::vector<LineSegment>& convexSegments, const Vector2D& point)
+{
+	// Separate our segments into vertices and normals
+	std::vector<Vector2D> vertexSet;
+	std::vector<Vector2D> normalSet;
+	vertexSet.reserve(convexSegments.size());
+	normalSet.reserve(convexSegments.size());
+	for (auto begin = convexSegments.cbegin(); begin < convexSegments.cend(); ++begin)
+	{
+		vertexSet.push_back(begin->end);
+		normalSet.push_back(begin->normal);
+	}
+
+	// Then test for intersection
+	return SATIntersection(normalSet.data(), normalSet.size(), vertexSet.data(), vertexSet.size(), &point, 1);
 }
 
 // Check whether a moving point and line intersect.

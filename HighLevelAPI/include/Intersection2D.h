@@ -161,6 +161,14 @@ bool ConvexHullToOBBIntersection(const std::vector<LineSegment>& convexSegments,
 //	True if intersection, false otherwise
 bool ConvexHullToCircleInteresction(const std::vector<LineSegment>& convexSegments, const Transform& convexTransform, const Circle& circle);
 
+// Checks whether a point is inside a convex shape
+// Params:
+//	point: The point we are testing
+//	convexSegments: The line segments of the convex polygon
+// Returns:
+//	True if intersection, false otherwise
+bool ConvexHullToPointIntersection(const std::vector<LineSegment>& convexSegments, const Vector2D& point);
+
 // Check whether a moving point and line intersect.
 // Params:
 //  staticLine   = Start and end of first line segment.
