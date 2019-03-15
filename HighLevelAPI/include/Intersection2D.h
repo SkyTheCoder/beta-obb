@@ -85,10 +85,10 @@ bool RectangleCircleIntersection(const BoundingRectangle& rect, const Circle& ci
 //   points1Size = How many points are in the first convex hull.
 //   points2 = The array of points in the second convex hull.
 //   points2Size = How many points are in the second convex hull.
-//   points2Offset = A value to add to/subtract from the second convex hull's projected points, essentially a radius for each point.
+//   radius = A value to add to/subtract from the second convex hull's projected points, essentially a radius for each point.
 // Returns:
 //   True if intersection, false otherwise.
-bool SATIntersection(const Vector2D* axes, unsigned axesSize, const Vector2D* points1, unsigned points1Size, const Vector2D* points2, unsigned points2Size, float points2Offset = 0.0f);
+bool SATIntersection(const Vector2D* axes, unsigned axesSize, const Vector2D* points1, unsigned points1Size, const Vector2D* points2, unsigned points2Size, float radius = 0.0f);
 
 // Calculates the (object space) corner points of a rectangle.
 // Params:

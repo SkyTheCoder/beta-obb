@@ -23,10 +23,12 @@
 #include "ColliderRectangle.h"
 #include "ColliderConvex.h"
 
+#ifdef _DEBUG
 // Systems
 #include <DebugDraw.h>
 #include <Graphics.h>
 #include <Camera.h>
+#endif
 
 //------------------------------------------------------------------------------
 
@@ -114,20 +116,22 @@ bool RectangleCircleIntersection(const BoundingRectangle& rect, const Circle& ci
 //   points1Size = How many points are in the first convex hull.
 //   points2 = The array of points in the second convex hull.
 //   points2Size = How many points are in the second convex hull.
-//   points2Offset = A value to add to/subtract from the second convex hull's projected points, essentially a radius for each point.
+//   radius = A value to add to/subtract from the second convex hull's projected points, essentially a radius for each point.
 // Returns:
 //   True if intersection, false otherwise.
-bool SATIntersection(const Vector2D* axes, unsigned axesSize, const Vector2D* points1, unsigned points1Size, const Vector2D* points2, unsigned points2Size, float points2Offset)
+bool SATIntersection(const Vector2D* axes, unsigned axesSize, const Vector2D* points1, unsigned points1Size, const Vector2D* points2, unsigned points2Size, float radius)
 {
+#ifdef _DEBUG
 	DebugDraw& debugDraw = DebugDraw::GetInstance();
 	Camera& currentCamera = Graphics::GetInstance().GetCurrentCamera();
-	
+
 	// Draw the axes' lines.
 	for (unsigned i = 0; i < axesSize; i++)
 	{
 		debugDraw.AddLineToStrip(-400.0f * axes[i], 400.0f * axes[i], Colors::LightBlue);
 	}
 	debugDraw.EndLineStrip(currentCamera);
+#endif
 
 	// Loop through each axis.
 	for (unsigned i = 0; i < axesSize; i++)
@@ -142,9 +146,11 @@ bool SATIntersection(const Vector2D* axes, unsigned axesSize, const Vector2D* po
 			// Project the current point along the current axis.
 			float projectedPoint = points1[j].DotProduct(axes[i]);
 			
+#ifdef _DEBUG
 			// Draw the point being projected along the current axis.
 			debugDraw.AddLineToStrip(points1[j], axes[i] * projectedPoint, Colors::Yellow);
 			debugDraw.AddCircle(axes[i] * projectedPoint, 4.0f, currentCamera, Colors::Violet);
+#endif
 
 			// Update the min/max extents of each convex hull.
 			maxExtents1 = max(maxExtents1, projectedPoint);
@@ -156,41 +162,43 @@ bool SATIntersection(const Vector2D* axes, unsigned axesSize, const Vector2D* po
 			// Project the current point along the current axis.
 			float projectedPoint = points2[j].DotProduct(axes[i]);
 
+#ifdef _DEBUG
 			// Draw the point being projected along the current axis.
-			debugDraw.AddLineToStrip(points2[j] - axes[i] * points2Offset, axes[i] * (projectedPoint - points2Offset), Colors::Yellow);
-			debugDraw.AddCircle(axes[i] * (projectedPoint - points2Offset), 4.0f, currentCamera, Colors::Violet);
-			debugDraw.AddLineToStrip(points2[j] + axes[i] * points2Offset, axes[i] * (projectedPoint + points2Offset), Colors::Yellow);
-			debugDraw.AddCircle(axes[i] * (projectedPoint + points2Offset), 4.0f, currentCamera, Colors::Violet);
+			debugDraw.AddLineToStrip(points2[j] - axes[i] * radius, axes[i] * (projectedPoint - radius), Colors::Yellow);
+			debugDraw.AddCircle(axes[i] * (projectedPoint - radius), 4.0f, currentCamera, Colors::Violet);
+			debugDraw.AddLineToStrip(points2[j] + axes[i] * radius, axes[i] * (projectedPoint + radius), Colors::Yellow);
+			debugDraw.AddCircle(axes[i] * (projectedPoint + radius), 4.0f, currentCamera, Colors::Violet);
+#endif
 
 			// Update the min/max extents of each convex hull.
 			maxExtents2 = max(maxExtents2, projectedPoint);
 			minExtents2 = min(minExtents2, projectedPoint);
 		}
 
+#ifdef _DEBUG
 		debugDraw.EndLineStrip(currentCamera);
+#endif
 
-		float gap1 = (minExtents2 - points2Offset) - maxExtents1;
-		float gap2 = minExtents1 - (maxExtents2 + points2Offset);
+		float gap1 = (minExtents2 - radius) - maxExtents1;
+		float gap2 = minExtents1 - (maxExtents2 + radius);
 		float gap = max(gap1, gap2);
 
 		// If there is a gap between the min and max extents on this axis, the convex hulls are not colliding.
 		if (gap > 0)
 		{
+#ifdef _DEBUG
 			if (gap1 > gap2)
 			{
 				debugDraw.AddLineToStrip(maxExtents1 * axes[i], (maxExtents1 + gap) * axes[i], Colors::Red);
 			}
 			else
 			{
-				debugDraw.AddLineToStrip((maxExtents2 + points2Offset) * axes[i], ((maxExtents2 + points2Offset) + gap) * axes[i], Colors::Red);
+				debugDraw.AddLineToStrip((maxExtents2 + radius) * axes[i], ((maxExtents2 + radius) + gap) * axes[i], Colors::Red);
 			}
 			debugDraw.EndLineStrip(currentCamera);
+#endif
 			return false;
 		}
-
-		// If there is a gap between the min and max extents on this axis, the convex hulls are not colliding.
-		//if (maxExtents1 < (minExtents2 - points2Offset) || (maxExtents2 + points2Offset) < minExtents1)
-		//	return false;
 	}
 
 	// If we reached this point, there is no gap, the OBBs are colliding.
@@ -328,14 +336,21 @@ bool OBBCircleIntersection(const ColliderRectangle& rect, const Circle& circle)
 //	max: The maximum value of the polygon as a result of projection it into the normal
 void ProjectPolygon(const Vector2D& normal, const std::vector<Vector2D>& vertices, float& minValue, float& maxValue)
 {
+#ifdef _DEBUG
 	// Debug draw information for every projection
 	DebugDraw& debug = DebugDraw::GetInstance();
 	Camera& currentCamera = Graphics::GetInstance().GetCurrentCamera();
+#endif
+
 	// Get the minimum and maximum projetions of the first polygon in the line
 	minValue = FLT_MAX;
 	maxValue = FLT_MIN;
+
+#ifdef _DEBUG
 	// Draw the normal
 	debug.AddLineToStrip(-normal * 800, normal * 800, Colors::Violet);
+#endif
+
 	// Project the vertex into the normal and save the edges of the first projecte polygon into the line
 	// minimum and maximum
 	for (auto vertex = vertices.cbegin(); vertex < vertices.cend(); ++vertex)
@@ -344,10 +359,12 @@ void ProjectPolygon(const Vector2D& normal, const std::vector<Vector2D>& vertice
 		minValue = min(minValue, projection);
 		maxValue = max(maxValue, projection);
 	}
+
+#ifdef _DEBUG
 	debug.AddCircle(normal * minValue, 10, currentCamera, Colors::Yellow);
 	debug.AddCircle(normal * maxValue, 10, currentCamera, Colors::Yellow);
 	debug.EndLineStrip(currentCamera);
-	
+#endif
 }
 
 // Check whether two convex polygons interact
@@ -416,7 +433,7 @@ bool ConvexHullToOBBIntersection(const std::vector<LineSegment>& convexSegments,
 
 	// Transform the vertices by the rotation but also scale them back
 	Vector2D translation = rectTransform.GetTranslation();
-	Matrix2D matrix = Matrix2D::RotationMatrixRadians(rectTransform.GetRotation()) * Matrix2D::TranslationMatrix(translation.x, translation.y);
+	CS230::Matrix2D matrix = CS230::Matrix2D::RotationMatrixRadians(rectTransform.GetRotation()) * CS230::Matrix2D::TranslationMatrix(translation.x, translation.y);
 	topLeft = matrix * topLeft;
 	topRight = matrix * topRight;
 	bottomRight = matrix * bottomRight;
