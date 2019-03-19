@@ -81,7 +81,7 @@ void ColliderConvex::Serialize(Parser& parser) const
 void ColliderConvex::Deserialize(Parser& parser)
 {
 	// Read the amont of lines we've got
-	int lineCount;
+	size_t lineCount;
 	parser.ReadVariable("lineCount", lineCount);
 	// Skip over the lines variable
 	parser.ReadSkip("lines");
@@ -90,7 +90,7 @@ void ColliderConvex::Deserialize(Parser& parser)
 	// Read the lines
 	localLines.reserve(lineCount);
 
-	for (unsigned i = 0; i < lineCount; ++i)
+	for (size_t i = 0; i < lineCount; ++i)
 	{
 		LineSegment segment;
 		parser.ReadValue(segment);

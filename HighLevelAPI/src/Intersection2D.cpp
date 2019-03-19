@@ -119,7 +119,7 @@ bool RectangleCircleIntersection(const BoundingRectangle& rect, const Circle& ci
 //   radius = A value to add to/subtract from the second convex hull's projected points, essentially a radius for each point.
 // Returns:
 //   True if intersection, false otherwise.
-bool SATIntersection(const Vector2D* axes, unsigned axesSize, const Vector2D* points1, unsigned points1Size, const Vector2D* points2, unsigned points2Size, float radius)
+bool SATIntersection(const Vector2D* axes, size_t axesSize, const Vector2D* points1, size_t points1Size, const Vector2D* points2, size_t points2Size, float radius)
 {
 #ifdef _DEBUG
 	DebugDraw& debugDraw = DebugDraw::GetInstance();
@@ -379,7 +379,7 @@ bool ConvexHullIntersection(const std::vector<LineSegment>& lineSegments1, const
 	std::vector<Vector2D> vertexSet1;
 	std::vector<Vector2D> vertexSet2;
 	std::vector<Vector2D> normalSet;
-	unsigned totalSize = lineSegments1.size() + lineSegments2.size();
+	size_t totalSize = lineSegments1.size() + lineSegments2.size();
 	vertexSet1.reserve(totalSize);
 	vertexSet2.reserve(totalSize);
 	normalSet.reserve(totalSize);
@@ -399,7 +399,7 @@ bool ConvexHullIntersection(const std::vector<LineSegment>& lineSegments1, const
 		else
 		{
 			vertexSet2.push_back(lineSegments2[i - lineSegments1.size()].end);
-			for (unsigned j = i - lineSegments1.size(); j < normalSet.size(); ++j)
+			for (size_t j = i - lineSegments1.size(); j < normalSet.size(); ++j)
 			{
 				if (lineSegments2[i - lineSegments1.size()].normal.DotProduct(normalSet[j]) == 0)
 					continue;
